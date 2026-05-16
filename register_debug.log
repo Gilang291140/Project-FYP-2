@@ -1,0 +1,63 @@
+2026-04-18 08:01:59 - === NEW REGISTRATION REQUEST ===
+2026-04-18 08:01:59 - Raw input received: {"full_name":"gilangwe","email":"gilang_ramadhan2@soc.uum.edu.my","username":"gilang23","password":"Gilang123","role":"jha"}
+2026-04-18 08:01:59 - Decoded data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [password] => Gilang123
+    [role] => jha
+)
+
+2026-04-18 08:01:59 - Sanitized data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [role] => jha
+    [password_length] => 9
+)
+
+2026-04-18 08:02:09 - === NEW REGISTRATION REQUEST ===
+2026-04-18 08:02:09 - Raw input received: {"full_name":"gilangwe","email":"gilang_ramadhan2@soc.uum.edu.my","username":"gilang23","password":"Gilang123","role":"admin"}
+2026-04-18 08:02:09 - Decoded data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [password] => Gilang123
+    [role] => admin
+)
+
+2026-04-18 08:02:09 - Sanitized data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [role] => admin
+    [password_length] => 9
+)
+
+2026-04-18 08:02:09 - Database connected successfully
+2026-04-18 08:02:09 - Password hash created
+2026-04-18 08:02:09 - User created successfully with ID: 7
+2026-04-18 08:02:09 - Audit log created
+2026-04-18 08:02:09 - Registration completed successfully
+2026-04-18 08:06:07 - === NEW REGISTRATION REQUEST ===
+2026-04-18 08:06:07 - Raw input received: {"full_name":"gilangwer","email":"hengkylexmana.l@gmail.com","username":"gilang12345","password":"Gilang123","role":"jha"}
+2026-04-18 08:06:07 - Decoded data: Array
+(
+    [full_name] => gilangwer
+    [email] => hengkylexmana.l@gmail.com
+    [username] => gilang12345
+    [password] => Gilang123
+    [role] => jha
+)
+
+2026-04-18 08:06:07 - Selected role from form: jha
+2026-04-18 08:06:07 - Database role to save: verifier
+2026-04-18 08:06:07 - Database connected successfully
+2026-04-18 08:06:07 - Password hash created
+2026-04-18 08:06:07 - User created successfully with ID: 8 and role: verifier
+2026-04-18 08:06:07 - Audit log created
+2026-04-18 08:06:07 - Registration completed successfully

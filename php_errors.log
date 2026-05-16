@@ -1,0 +1,469 @@
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Login request received
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Raw input: {"username":"admin","password":"admin123"}
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Decoded data: Array
+(
+    [username] => admin
+    [password] => admin123
+)
+
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Attempting login for username: admin
+[08-Apr-2026 18:14:05 Europe/Berlin] Database connected successfully
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Database connected
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - User found: Yes
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - User data: Array
+(
+    [id] => 1
+    [username] => admin
+)
+
+[08-Apr-2026 18:14:05 Europe/Berlin] 2026-04-08 18:14:05 - Password verification: FAILED
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Login request received
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Raw input: {"username":"admin","password":"admin123"}
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Decoded data: Array
+(
+    [username] => admin
+    [password] => admin123
+)
+
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Attempting login for username: admin
+[08-Apr-2026 18:14:12 Europe/Berlin] Database connected successfully
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Database connected
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - User found: Yes
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - User data: Array
+(
+    [id] => 1
+    [username] => admin
+)
+
+[08-Apr-2026 18:14:12 Europe/Berlin] 2026-04-08 18:14:12 - Password verification: FAILED
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Login request received
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Raw input: {"username":"gilangramadhan9797@gmail.com","password":"Gilang123"}
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Decoded data: Array
+(
+    [username] => gilangramadhan9797@gmail.com
+    [password] => Gilang123
+)
+
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Attempting login for username: gilangramadhan9797@gmail.com
+[08-Apr-2026 18:16:38 Europe/Berlin] Database connected successfully
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Database connected
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - User found: Yes
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - User data: Array
+(
+    [id] => 3
+    [username] => gilang12
+)
+
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Password verification: SUCCESS
+[08-Apr-2026 18:16:38 Europe/Berlin] 2026-04-08 18:16:38 - Session set for user: gilang12
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Login request received
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Raw input: {"username":"gilangramadhan9797@gmail.com","password":"Gilang123"}
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Decoded data: Array
+(
+    [username] => gilangramadhan9797@gmail.com
+    [password] => Gilang123
+)
+
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Attempting login for username: gilangramadhan9797@gmail.com
+[09-Apr-2026 08:55:39 Europe/Berlin] Database connected successfully
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Database connected
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - User found: Yes
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - User data: Array
+(
+    [id] => 3
+    [username] => gilang12
+)
+
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Password verification: SUCCESS
+[09-Apr-2026 08:55:39 Europe/Berlin] 2026-04-09 08:55:39 - Session set for user: gilang12
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Login request received
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Raw input: {"username":"gilangramadhan9797@gmail.com","password":"Giolang123"}
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Decoded data: Array
+(
+    [username] => gilangramadhan9797@gmail.com
+    [password] => Giolang123
+)
+
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Attempting login for username: gilangramadhan9797@gmail.com
+[09-Apr-2026 08:56:52 Europe/Berlin] Database connected successfully
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Database connected
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - User found: Yes
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - User data: Array
+(
+    [id] => 3
+    [username] => gilang12
+)
+
+[09-Apr-2026 08:56:52 Europe/Berlin] 2026-04-09 08:56:52 - Password verification: FAILED
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Login request received
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Raw input: {"username":"gilangramadhan9797@gmail.com","password":"Gilang123"}
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Decoded data: Array
+(
+    [username] => gilangramadhan9797@gmail.com
+    [password] => Gilang123
+)
+
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Attempting login for username: gilangramadhan9797@gmail.com
+[09-Apr-2026 08:56:59 Europe/Berlin] Database connected successfully
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Database connected
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - User found: Yes
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - User data: Array
+(
+    [id] => 3
+    [username] => gilang12
+)
+
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Password verification: SUCCESS
+[09-Apr-2026 08:56:59 Europe/Berlin] 2026-04-09 08:56:59 - Session set for user: gilang12
+[18-Apr-2026 07:31:54 Europe/Berlin] 2026-04-18 07:31:54 - Login request received
+[18-Apr-2026 07:31:54 Europe/Berlin] 2026-04-18 07:31:54 - Raw input: {"username":"admin","password":"admin123"}
+[18-Apr-2026 07:31:54 Europe/Berlin] 2026-04-18 07:31:54 - Decoded data: Array
+(
+    [username] => admin
+    [password] => admin123
+)
+
+[18-Apr-2026 07:31:54 Europe/Berlin] 2026-04-18 07:31:54 - Attempting login for username: admin
+[18-Apr-2026 07:31:58 Europe/Berlin] Connection error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[18-Apr-2026 07:31:58 Europe/Berlin] 2026-04-18 07:31:58 - Database connection failed
+[18-Apr-2026 07:32:19 Europe/Berlin] 2026-04-18 07:32:19 - Login request received
+[18-Apr-2026 07:32:19 Europe/Berlin] 2026-04-18 07:32:19 - Raw input: {"username":"gilang12","password":"Gilang123"}
+[18-Apr-2026 07:32:19 Europe/Berlin] 2026-04-18 07:32:19 - Decoded data: Array
+(
+    [username] => gilang12
+    [password] => Gilang123
+)
+
+[18-Apr-2026 07:32:19 Europe/Berlin] 2026-04-18 07:32:19 - Attempting login for username: gilang12
+[18-Apr-2026 07:32:23 Europe/Berlin] Connection error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[18-Apr-2026 07:32:23 Europe/Berlin] 2026-04-18 07:32:23 - Database connection failed
+[18-Apr-2026 07:32:30 Europe/Berlin] 2026-04-18 07:32:30 - Login request received
+[18-Apr-2026 07:32:30 Europe/Berlin] 2026-04-18 07:32:30 - Raw input: {"username":"gilang12","password":"Gilang123"}
+[18-Apr-2026 07:32:30 Europe/Berlin] 2026-04-18 07:32:30 - Decoded data: Array
+(
+    [username] => gilang12
+    [password] => Gilang123
+)
+
+[18-Apr-2026 07:32:30 Europe/Berlin] 2026-04-18 07:32:30 - Attempting login for username: gilang12
+[18-Apr-2026 07:32:34 Europe/Berlin] Connection error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[18-Apr-2026 07:32:34 Europe/Berlin] 2026-04-18 07:32:34 - Database connection failed
+[18-Apr-2026 07:33:06 Europe/Berlin] 2026-04-18 07:33:06 - Login request received
+[18-Apr-2026 07:33:06 Europe/Berlin] 2026-04-18 07:33:06 - Raw input: {"username":"gilang123","password":"Gilang123"}
+[18-Apr-2026 07:33:06 Europe/Berlin] 2026-04-18 07:33:06 - Decoded data: Array
+(
+    [username] => gilang123
+    [password] => Gilang123
+)
+
+[18-Apr-2026 07:33:06 Europe/Berlin] 2026-04-18 07:33:06 - Attempting login for username: gilang123
+[18-Apr-2026 07:33:10 Europe/Berlin] Connection error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[18-Apr-2026 07:33:10 Europe/Berlin] 2026-04-18 07:33:10 - Database connection failed
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Login request received
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Raw input: {"username":"gilang123","password":"Gilang123"}
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Decoded data: Array
+(
+    [username] => gilang123
+    [password] => Gilang123
+)
+
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Attempting login for username: gilang123
+[18-Apr-2026 07:33:46 Europe/Berlin] Database connected successfully
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Database connected
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - User found: Yes
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - User data: Array
+(
+    [id] => 4
+    [username] => gilang123
+)
+
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Password verification: SUCCESS
+[18-Apr-2026 07:33:46 Europe/Berlin] 2026-04-18 07:33:46 - Session set for user: gilang123
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - Raw input received: {"username":"jha_verifier","password":"jha123"}
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - Decoded data: Array
+(
+    [username] => jha_verifier
+    [password] => jha123
+)
+
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - Attempting login for username: jha_verifier
+[18-Apr-2026 07:46:17 Europe/Berlin] Database connected successfully
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - Database connected successfully
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - User query executed. Found: No
+[18-Apr-2026 07:46:17 Europe/Berlin] 2026-04-18 07:46:17 - User not found: jha_verifier
+[18-Apr-2026 08:01:59 Europe/Berlin] 2026-04-18 08:01:59 - === NEW REGISTRATION REQUEST ===
+[18-Apr-2026 08:01:59 Europe/Berlin] 2026-04-18 08:01:59 - Raw input received: {"full_name":"gilangwe","email":"gilang_ramadhan2@soc.uum.edu.my","username":"gilang23","password":"Gilang123","role":"jha"}
+[18-Apr-2026 08:01:59 Europe/Berlin] 2026-04-18 08:01:59 - Decoded data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [password] => Gilang123
+    [role] => jha
+)
+
+[18-Apr-2026 08:01:59 Europe/Berlin] 2026-04-18 08:01:59 - Sanitized data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [role] => jha
+    [password_length] => 9
+)
+
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - === NEW REGISTRATION REQUEST ===
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Raw input received: {"full_name":"gilangwe","email":"gilang_ramadhan2@soc.uum.edu.my","username":"gilang23","password":"Gilang123","role":"admin"}
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Decoded data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [password] => Gilang123
+    [role] => admin
+)
+
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Sanitized data: Array
+(
+    [full_name] => gilangwe
+    [email] => gilang_ramadhan2@soc.uum.edu.my
+    [username] => gilang23
+    [role] => admin
+    [password_length] => 9
+)
+
+[18-Apr-2026 08:02:09 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Database connected successfully
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Password hash created
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - User created successfully with ID: 7
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Audit log created
+[18-Apr-2026 08:02:09 Europe/Berlin] 2026-04-18 08:02:09 - Registration completed successfully
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - === NEW REGISTRATION REQUEST ===
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Raw input received: {"full_name":"gilangwer","email":"hengkylexmana.l@gmail.com","username":"gilang12345","password":"Gilang123","role":"jha"}
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Decoded data: Array
+(
+    [full_name] => gilangwer
+    [email] => hengkylexmana.l@gmail.com
+    [username] => gilang12345
+    [password] => Gilang123
+    [role] => jha
+)
+
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Selected role from form: jha
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Database role to save: verifier
+[18-Apr-2026 08:06:07 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Database connected successfully
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Password hash created
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - User created successfully with ID: 8 and role: verifier
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Audit log created
+[18-Apr-2026 08:06:07 Europe/Berlin] 2026-04-18 08:06:07 - Registration completed successfully
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Raw input received: {"username":"gilang12345","password":"Gilang123"}
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Decoded data: Array
+(
+    [username] => gilang12345
+    [password] => Gilang123
+)
+
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Attempting login for username: gilang12345
+[18-Apr-2026 08:06:23 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Database connected successfully
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - User query executed. Found: Yes
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - User found: Array
+(
+    [id] => 8
+    [username] => gilang12345
+    [role] => verifier
+)
+
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Password verification result: SUCCESS
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Session created for user: gilang12345
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Session ID: ia9nlaf93rq67h2otclug4hsdo
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - Session data: Array
+(
+    [user_id] => 8
+    [username] => gilang12345
+    [full_name] => gilangwer
+    [email] => hengkylexmana.l@gmail.com
+    [role] => verifier
+    [logged_in] => 1
+    [login_time] => 1776492383
+)
+
+[18-Apr-2026 08:06:23 Europe/Berlin] 2026-04-18 08:06:23 - PDO Exception: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'halal_food_db.activity_logs' doesn't exist
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Raw input received: {"username":"gilang12344","password":"Gilang123"}
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Decoded data: Array
+(
+    [username] => gilang12344
+    [password] => Gilang123
+)
+
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Attempting login for username: gilang12344
+[18-Apr-2026 08:06:58 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Database connected successfully
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - User query executed. Found: Yes
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - User found: Array
+(
+    [id] => 6
+    [username] => gilang12344
+    [role] => 
+)
+
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Password verification result: SUCCESS
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Session created for user: gilang12344
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Session ID: vhvdhqqkr4623m5h5oi962tjbp
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - Session data: Array
+(
+    [user_id] => 6
+    [username] => gilang12344
+    [full_name] => gilangrama
+    [email] => gilangramadhan77@gmail.com
+    [role] => 
+    [logged_in] => 1
+    [login_time] => 1776492418
+)
+
+[18-Apr-2026 08:06:58 Europe/Berlin] 2026-04-18 08:06:58 - PDO Exception: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'halal_food_db.activity_logs' doesn't exist
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Raw input received: {"username":"gilang12344","password":"Gilang123"}
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Decoded data: Array
+(
+    [username] => gilang12344
+    [password] => Gilang123
+)
+
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Attempting login for username: gilang12344
+[18-Apr-2026 08:08:09 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Database connected successfully
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - User query executed. Found: Yes
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - User found: Array
+(
+    [id] => 6
+    [username] => gilang12344
+    [role] => 
+)
+
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Password verification result: SUCCESS
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Session created for user: gilang12344
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Session ID: ed4r8difcb97i748a31t7t17ua
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - Session data: Array
+(
+    [user_id] => 6
+    [username] => gilang12344
+    [full_name] => gilangrama
+    [email] => gilangramadhan77@gmail.com
+    [role] => 
+    [logged_in] => 1
+    [login_time] => 1776492489
+)
+
+[18-Apr-2026 08:08:09 Europe/Berlin] 2026-04-18 08:08:09 - PDO Exception: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'halal_food_db.activity_logs' doesn't exist
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Raw input received: {"username":"gilang12344","password":"Gilang123"}
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Decoded data: Array
+(
+    [username] => gilang12344
+    [password] => Gilang123
+)
+
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Attempting login for username: gilang12344
+[18-Apr-2026 08:08:12 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Database connected successfully
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - User query executed. Found: Yes
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - User found: Array
+(
+    [id] => 6
+    [username] => gilang12344
+    [role] => 
+)
+
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Password verification result: SUCCESS
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Session created for user: gilang12344
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Session ID: 70fvbq7aieein8ipncnske01tn
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - Session data: Array
+(
+    [user_id] => 6
+    [username] => gilang12344
+    [full_name] => gilangrama
+    [email] => gilangramadhan77@gmail.com
+    [role] => 
+    [logged_in] => 1
+    [login_time] => 1776492492
+)
+
+[18-Apr-2026 08:08:12 Europe/Berlin] 2026-04-18 08:08:12 - PDO Exception: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'halal_food_db.activity_logs' doesn't exist
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - === NEW LOGIN REQUEST ===
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Raw input received: {"username":"gilang12345","password":"Gilang123"}
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Decoded data: Array
+(
+    [username] => gilang12345
+    [password] => Gilang123
+)
+
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Attempting login for username: gilang12345
+[18-Apr-2026 08:08:22 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Database connected successfully
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - User query executed. Found: Yes
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - User found: Array
+(
+    [id] => 8
+    [username] => gilang12345
+    [role] => verifier
+)
+
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Password verification result: SUCCESS
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Session created for user: gilang12345
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Session ID: 3tmch9u3c259mhnolqnkqdfef2
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - Session data: Array
+(
+    [user_id] => 8
+    [username] => gilang12345
+    [full_name] => gilangwer
+    [email] => hengkylexmana.l@gmail.com
+    [role] => verifier
+    [logged_in] => 1
+    [login_time] => 1776492502
+)
+
+[18-Apr-2026 08:08:22 Europe/Berlin] 2026-04-18 08:08:22 - PDO Exception: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'halal_food_db.activity_logs' doesn't exist
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - Login attempt for username: gilang12345
+[18-Apr-2026 08:08:50 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - Database connected successfully
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - User query executed. Found: Yes
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - User found: gilang12345 with role: verifier
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - Password verification result: SUCCESS
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - Session created for user: gilang12345
+[18-Apr-2026 08:08:50 Europe/Berlin] 2026-04-18 08:08:50 - ERROR - Login successful. Redirecting to: verifier-dashboard.html
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - Login attempt for username: gilang1234
+[18-Apr-2026 08:09:05 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - Database connected successfully
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - User query executed. Found: Yes
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - User found: gilang1234 with role: 
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - Password verification result: SUCCESS
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - Session created for user: gilang1234
+[18-Apr-2026 08:09:05 Europe/Berlin] 2026-04-18 08:09:05 - ERROR - Login successful. Redirecting to: admin-dashboard.html
+[18-Apr-2026 08:11:36 Europe/Berlin] 2026-04-18 08:11:36 - ERROR - Login attempt for username: gilang1234
+[18-Apr-2026 08:11:36 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:11:36 Europe/Berlin] 2026-04-18 08:11:36 - ERROR - Database connected successfully
+[18-Apr-2026 08:11:36 Europe/Berlin] 2026-04-18 08:11:36 - ERROR - User query executed. Found: Yes
+[18-Apr-2026 08:11:36 Europe/Berlin] 2026-04-18 08:11:36 - ERROR - User found: gilang1234 with role: 
+[18-Apr-2026 08:11:37 Europe/Berlin] 2026-04-18 08:11:37 - ERROR - Password verification result: SUCCESS
+[18-Apr-2026 08:11:37 Europe/Berlin] 2026-04-18 08:11:37 - ERROR - Session created for user: gilang1234
+[18-Apr-2026 08:11:37 Europe/Berlin] 2026-04-18 08:11:37 - ERROR - Login successful. Redirecting to: admin-dashboard.html
+[18-Apr-2026 08:19:18 Europe/Berlin] 2026-04-18 08:19:18 - ERROR - Login attempt for username: gilang12345
+[18-Apr-2026 08:19:18 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:19:18 Europe/Berlin] 2026-04-18 08:19:18 - ERROR - Database connected successfully
+[18-Apr-2026 08:19:18 Europe/Berlin] 2026-04-18 08:19:18 - ERROR - User query executed. Found: Yes
+[18-Apr-2026 08:19:18 Europe/Berlin] 2026-04-18 08:19:18 - ERROR - User found: gilang12345 with role: verifier
+[18-Apr-2026 08:19:19 Europe/Berlin] 2026-04-18 08:19:19 - ERROR - Password verification result: SUCCESS
+[18-Apr-2026 08:19:19 Europe/Berlin] 2026-04-18 08:19:19 - ERROR - Session created for user: gilang12345
+[18-Apr-2026 08:19:19 Europe/Berlin] 2026-04-18 08:19:19 - ERROR - Login successful. Redirecting to: verifier-dashboard.html
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - Login attempt for username: gilang1234
+[18-Apr-2026 08:44:02 Europe/Berlin] Database connected successfully
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - Database connected successfully
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - User query executed. Found: Yes
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - User found: gilang1234 with role: 
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - Password verification result: SUCCESS
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - Session created for user: gilang1234
+[18-Apr-2026 08:44:02 Europe/Berlin] 2026-04-18 08:44:02 - ERROR - Login successful. Redirecting to: admin-dashboard.html

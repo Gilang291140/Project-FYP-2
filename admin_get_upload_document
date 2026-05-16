@@ -1,0 +1,32 @@
+<?php
+session_start();
+require_once '../backend/config/database.php';
+
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'super_admin')) {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized', 'data' => []]);
+    exit;
+}
+
+try {
+    $database = new Database();
+    $db = $database->getConnection();
+    
+    $query = "SELECT d.*, b.business_name, u.full_name as submitted_by_name 
+              FROM admin_uploaded_documents d
+              LEFT JOIN halal_businesses b ON d.business_id = b.id
+              LEFT JOIN users u ON d.submitted_by = u.id
+              WHERE d.submitted_by = :user_id
+              ORDER BY d.created_at DESC";
+    
+    $stmt = $db->prepare($query);
+    $stmt->execute([':user_id' => $_SESSION['user_id']]);
+    $documents = $stmt->fetchAll();
+    
+    echo json_encode(['success' => true, 'data' => $documents]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage(), 'data' => []]);
+}
+?>

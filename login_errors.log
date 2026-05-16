@@ -1,0 +1,35 @@
+2026-04-18 08:08:50 - ERROR - Login attempt for username: gilang12345
+2026-04-18 08:08:50 - ERROR - Database connected successfully
+2026-04-18 08:08:50 - ERROR - User query executed. Found: Yes
+2026-04-18 08:08:50 - ERROR - User found: gilang12345 with role: verifier
+2026-04-18 08:08:50 - ERROR - Password verification result: SUCCESS
+2026-04-18 08:08:50 - ERROR - Session created for user: gilang12345
+2026-04-18 08:08:50 - ERROR - Login successful. Redirecting to: verifier-dashboard.html
+2026-04-18 08:09:05 - ERROR - Login attempt for username: gilang1234
+2026-04-18 08:09:05 - ERROR - Database connected successfully
+2026-04-18 08:09:05 - ERROR - User query executed. Found: Yes
+2026-04-18 08:09:05 - ERROR - User found: gilang1234 with role: 
+2026-04-18 08:09:05 - ERROR - Password verification result: SUCCESS
+2026-04-18 08:09:05 - ERROR - Session created for user: gilang1234
+2026-04-18 08:09:05 - ERROR - Login successful. Redirecting to: admin-dashboard.html
+2026-04-18 08:11:36 - ERROR - Login attempt for username: gilang1234
+2026-04-18 08:11:36 - ERROR - Database connected successfully
+2026-04-18 08:11:36 - ERROR - User query executed. Found: Yes
+2026-04-18 08:11:36 - ERROR - User found: gilang1234 with role: 
+2026-04-18 08:11:37 - ERROR - Password verification result: SUCCESS
+2026-04-18 08:11:37 - ERROR - Session created for user: gilang1234
+2026-04-18 08:11:37 - ERROR - Login successful. Redirecting to: admin-dashboard.html
+2026-04-18 08:19:18 - ERROR - Login attempt for username: gilang12345
+2026-04-18 08:19:18 - ERROR - Database connected successfully
+2026-04-18 08:19:18 - ERROR - User query executed. Found: Yes
+2026-04-18 08:19:18 - ERROR - User found: gilang12345 with role: verifier
+2026-04-18 08:19:19 - ERROR - Password verification result: SUCCESS
+2026-04-18 08:19:19 - ERROR - Session created for user: gilang12345
+2026-04-18 08:19:19 - ERROR - Login successful. Redirecting to: verifier-dashboard.html
+2026-04-18 08:44:02 - ERROR - Login attempt for username: gilang1234
+2026-04-18 08:44:02 - ERROR - Database connected successfully
+2026-04-18 08:44:02 - ERROR - User query executed. Found: Yes
+2026-04-18 08:44:02 - ERROR - User found: gilang1234 with role: 
+2026-04-18 08:44:02 - ERROR - Password verification result: SUCCESS
+2026-04-18 08:44:02 - ERROR - Session created for user: gilang1234
+2026-04-18 08:44:02 - ERROR - Login successful. Redirecting to: admin-dashboard.html
