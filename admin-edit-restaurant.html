@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Edit Restaurant - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #4caf50;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8edf2 100%);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .form-container { max-width: 1200px; margin: 0 auto; }
+        
+        .card-custom {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px 25px;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .required:after {
+            content: " *";
+            color: red;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+            transform: translateY(-2px);
+        }
+        
+        .image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 10px;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .image-preview:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+        
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .map-container {
+            height: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .location-info {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(46,125,50,0.3);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-spinner {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .loading-spinner i {
+            font-size: 48px;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .existing-image {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .delete-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(220,53,69,0.9);
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .delete-image:hover {
+            background: #dc3545;
+            transform: scale(1.1);
+        }
+        
+        .cert-status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .cert-status-pending { background: #ffc107; color: #333; }
+        .cert-status-verified { background: #28a745; color: white; }
+        .cert-status-rejected { background: #dc3545; color: white; }
+        .cert-status-none { background: #6c757d; color: white; }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .image-preview { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner"></i>
+            <p class="mt-3 mb-0">Processing...</p>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <i class="fas fa-edit me-2"></i> Edit Restaurant
+            </div>
+            <div class="p-4">
+                <form id="restaurantForm" enctype="multipart/form-data">
+                    <input type="hidden" id="business_id" name="id">
+                    <input type="hidden" id="current_cert_status" name="current_cert_status">
+                    <input type="hidden" id="has_existing_cert" name="has_existing_cert" value="0">
+                    <input type="hidden" id="existing_cert_number" name="existing_cert_number">
+                    
+                    <!-- Basic Information -->
+                    <div class="section-title"><i class="fas fa-info-circle me-2"></i> Basic Information</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Business Name</label>
+                            <input type="text" class="form-control" id="business_name" name="business_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="restaurant">Restaurant</option>
+                                <option value="cafe">Cafe</option>
+                                <option value="grocery">Grocery Store</option>
+                                <option value="food_truck">Food Truck</option>
+                                <option value="hotel">Hotel</option>
+                                <option value="catering">Catering</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label required">City</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Prefecture</label>
+                            <input type="text" class="form-control" id="prefecture" name="prefecture">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Postal Code</label>
+                            <input type="text" class="form-control" id="postal_code" name="postal_code">
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="section-title"><i class="fas fa-phone me-2"></i> Contact Information</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Website</label>
+                            <input type="url" class="form-control" id="website" name="website" placeholder="https://">
+                        </div>
+                    </div>
+                    
+                    <!-- Location / Maps -->
+                    <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i> Location (Click on map to set)</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Latitude</label>
+                            <input type="text" class="form-control" id="latitude" name="latitude" readonly placeholder="Click on map">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Longitude</label>
+                            <input type="text" class="form-control" id="longitude" name="longitude" readonly placeholder="Click on map">
+                        </div>
+                    </div>
+                    <div id="map" class="map-container"></div>
+                    <div class="location-info">
+                        <i class="fas fa-info-circle text-primary me-1"></i> Click on the map to set the restaurant location.
+                    </div>
+                    
+                    <!-- Business Details -->
+                    <div class="section-title"><i class="fas fa-store me-2"></i> Business Details</div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Price Range</label>
+                            <select class="form-select" id="price_range" name="price_range">
+                                <option value="$">$ (Budget)</option>
+                                <option value="$$" selected>$$ (Moderate)</option>
+                                <option value="$$$">$$$ (Expensive)</option>
+                                <option value="$$$$">$$$$ (Luxury)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Opening Hours</label>
+                            <input type="text" class="form-control" id="opening_hours" name="opening_hours" placeholder="e.g., Mon-Fri: 11am-9pm">
+                        </div>
+                    </div>
+                    
+                    <!-- Halal Status -->
+                    <div class="section-title"><i class="fas fa-certificate me-2"></i> Halal Status</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Halal Status</label>
+                            <select class="form-select" id="halal_status" name="halal_status" disabled>
+                                <option value="pending">Pending Verification</option>
+                            </select>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle text-info me-1"></i> 
+                                Status is managed by JHA. "Verified" and "Certified" can only be granted by JHA.
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="no_pork" name="no_pork" value="1">
+                                <label class="form-check-label">No Pork Products</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="no_alcohol" name="no_alcohol" value="1">
+                                <label class="form-check-label">No Alcohol</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="muslim_owner" name="muslim_owner" value="1">
+                                <label class="form-check-label">Muslim Owned</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Existing Images -->
+                    <div class="section-title"><i class="fas fa-image me-2"></i> Existing Images</div>
+                    <div id="existingImagesContainer" class="image-preview-container mb-3"></div>
+                    
+                    <!-- Upload New Images -->
+                    <div class="section-title"><i class="fas fa-plus-circle me-2"></i> Add New Images</div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <div class="file-upload-area" onclick="document.getElementById('new_images').click()">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                                <p class="mt-2">Click to upload new images</p>
+                                <small class="text-muted">JPG, PNG (Max 5MB each)</small>
+                                <input type="file" id="new_images" name="new_images[]" style="display:none" accept="image/*" multiple>
+                            </div>
+                            <div id="newImagePreview" class="image-preview-container"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate Section - No Certificate Yet -->
+                    <div id="noCertificateSection" style="display: none;">
+                        <div class="section-title"><i class="fas fa-file-pdf me-2"></i> Add Halal Certificate</div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            You haven't added a certificate yet. Please fill in the certificate details below to submit for JHA verification.
+                            Once approved, the restaurant status will become "Certified".
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Certificate Number</label>
+                                <input type="text" class="form-control" id="cert_number" name="cert_number" placeholder="e.g., JHA-2024-001">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Issued By</label>
+                                <select class="form-select" id="issued_by" name="issued_by">
+                                    <option value="JHA">Japan Halal Association (JHA)</option>
+                                    <option value="JAKIM">JAKIM (Malaysia)</option>
+                                    <option value="MUIS">MUIS (Singapore)</option>
+                                    <option value="OTHER">Other Certification Body</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Issue Date</label>
+                                <input type="date" class="form-control" id="issue_date" name="issue_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiry_date" name="expiry_date">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Certificate File (PDF/JPG/PNG)</label>
+                                <div class="file-upload-area" onclick="document.getElementById('certificate_file').click()">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                    <p class="mt-2">Click to upload certificate file</p>
+                                    <small class="text-muted">PDF, JPG, PNG (Max 10MB)</small>
+                                    <!-- Untuk upload certificate baru -->
+                                    <input type="file" id="certificate_file" name="certificate" style="display:none" accept=".pdf,.jpg,.jpeg,.png">
+
+                                    <!-- Untuk update certificate -->
+                                    <input type="file" id="update_certificate" name="certificate" style="display:none" accept=".pdf,.jpg,.jpeg,.png">
+                                </div>
+                                <div id="certFileName" class="small text-muted mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate Section - Has Certificate -->
+                    <div id="hasCertificateSection" style="display: none;">
+                        <div class="section-title"><i class="fas fa-certificate me-2"></i> Current Certificate Information</div>
+                        <div class="alert alert-success" id="certInfoContent"></div>
+                        
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            To update certificate, please fill in the new details below. The new certificate will be sent to JHA for verification again.
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Certificate Number</label>
+                                <input type="text" class="form-control" id="new_cert_number" name="cert_number" placeholder="Enter new certificate number">
+                                <small class="text-muted">Leave empty to keep current certificate</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Issued By</label>
+                                <select class="form-select" id="new_issued_by" name="issued_by">
+                                    <option value="JHA">Japan Halal Association (JHA)</option>
+                                    <option value="JAKIM">JAKIM (Malaysia)</option>
+                                    <option value="MUIS">MUIS (Singapore)</option>
+                                    <option value="OTHER">Other Certification Body</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Issue Date</label>
+                                <input type="date" class="form-control" id="new_issue_date" name="issue_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New Expiry Date</label>
+                                <input type="date" class="form-control" id="new_expiry_date" name="expiry_date">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">New Certificate File</label>
+                                <div class="file-upload-area" onclick="document.getElementById('update_certificate').click()">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                    <p class="mt-2">Click to upload new certificate file</p>
+                                    <small>PDF, JPG, PNG (Max 10MB)</small>
+                                    <input type="file" id="update_certificate" name="certificate" style="display:none" accept=".pdf,.jpg,.jpeg,.png">
+                                </div>
+                                <div id="updateCertFileName" class="small text-muted mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar"><div id="uploadProgress" class="progress-fill"></div></div>
+                    
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save me-2"></i> Update Restaurant
+                    </button>
+                    <a href="admin-dashboard.html" class="btn btn-secondary w-100 mt-3">
+                        <i class="fas fa-times me-2"></i> Cancel
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map, marker;
+        let businessId = null;
+        let existingCertNumber = null;
+        
+        // Get business ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        businessId = urlParams.get('id');
+        
+        if (!businessId) {
+            showNotification('No business ID specified', 'error');
+            setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500);
+        }
+        
+        document.getElementById('business_id').value = businessId;
+        
+        // Set default dates
+        const today = new Date().toISOString().split('T')[0];
+        const twoYearsLater = new Date();
+        twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+        const defaultExpiry = twoYearsLater.toISOString().split('T')[0];
+        
+        // Initialize map with default center (Tokyo)
+        function initMap(lat, lng) {
+            const centerLat = lat || 35.6895;
+            const centerLng = lng || 139.6917;
+            map = L.map('map').setView([centerLat, centerLng], 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map);
+            
+            marker = L.marker([centerLat, centerLng]).addTo(map);
+            
+            map.on('click', function(e) {
+                document.getElementById('latitude').value = e.latlng.lat.toFixed(6);
+                document.getElementById('longitude').value = e.latlng.lng.toFixed(6);
+                marker.setLatLng(e.latlng);
+            });
+        }
+        
+        function showNotification(message, type) {
+            // Simple alert for now, can be enhanced
+            alert(message);
+        }
+        
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+        function updateProgress(percent) { document.getElementById('uploadProgress').style.width = percent + '%'; }
+        
+        // Load business data
+        function loadBusinessData() {
+            showLoading();
+            fetch(`../api/admin_get_business.php?id=${businessId}`)
+                .then(r => r.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        const b = data.data;
+                        
+                        // Basic info
+                        document.getElementById('business_name').value = b.business_name || '';
+                        document.getElementById('category').value = b.category || 'restaurant';
+                        document.getElementById('address').value = b.address || '';
+                        document.getElementById('city').value = b.city || '';
+                        document.getElementById('prefecture').value = b.prefecture || '';
+                        document.getElementById('postal_code').value = b.postal_code || '';
+                        
+                        // Contact
+                        document.getElementById('phone').value = b.phone || '';
+                        document.getElementById('email').value = b.email || '';
+                        document.getElementById('website').value = b.website || '';
+                        
+                        // Details
+                        document.getElementById('description').value = b.description || '';
+                        document.getElementById('price_range').value = b.price_range || '$$';
+                        document.getElementById('opening_hours').value = b.opening_hours || '';
+                        
+                        // Halal status
+                        document.getElementById('halal_status').value = b.halal_status || 'pending';
+                        document.getElementById('no_pork').checked = b.no_pork == 1;
+                        document.getElementById('no_alcohol').checked = b.no_alcohol == 1;
+                        document.getElementById('muslim_owner').checked = b.muslim_owner == 1;
+                        
+                        // Location
+                        let lat = b.latitude ? parseFloat(b.latitude) : 35.6895;
+                        let lng = b.longitude ? parseFloat(b.longitude) : 139.6917;
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+                        initMap(lat, lng);
+                        
+                        // Certificate handling
+                        const hasCert = b.cert_number && b.cert_number.trim() !== '';
+                        document.getElementById('has_existing_cert').value = hasCert ? '1' : '0';
+                        document.getElementById('current_cert_status').value = b.cert_status || 'none';
+                        existingCertNumber = b.cert_number;
+                        document.getElementById('existing_cert_number').value = existingCertNumber || '';
+                        
+                        if (!hasCert || b.cert_status === 'none') {
+                            // No certificate yet - show add certificate section
+                            document.getElementById('noCertificateSection').style.display = 'block';
+                            document.getElementById('hasCertificateSection').style.display = 'none';
+                            document.getElementById('issue_date').value = today;
+                            document.getElementById('expiry_date').value = defaultExpiry;
+                        } else {
+                            // Has certificate - show certificate info
+                            document.getElementById('noCertificateSection').style.display = 'none';
+                            document.getElementById('hasCertificateSection').style.display = 'block';
+                            
+                            let statusBadge = '';
+                            let statusText = '';
+                            if (b.cert_status === 'verified') {
+                                statusBadge = '<span class="cert-status-badge cert-status-verified">✓ Verified by JHA</span>';
+                                statusText = 'Verified';
+                            } else if (b.cert_status === 'pending') {
+                                statusBadge = '<span class="cert-status-badge cert-status-pending">⏳ Pending JHA Verification</span>';
+                                statusText = 'Pending Verification';
+                            } else if (b.cert_status === 'rejected') {
+                                statusBadge = '<span class="cert-status-badge cert-status-rejected">✗ Rejected by JHA</span>';
+                                statusText = 'Rejected';
+                            } else {
+                                statusBadge = '<span class="cert-status-badge cert-status-none">⚠️ Certificate Added - Not Submitted</span>';
+                                statusText = 'Not Submitted';
+                            }
+                            
+                            document.getElementById('certInfoContent').innerHTML = `
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-hashtag"></i> Certificate Number:</strong><br>
+                                        ${escapeHtml(b.cert_number)}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-building"></i> Issued By:</strong><br>
+                                        ${escapeHtml(b.cert_issued_by || '-')}
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <strong><i class="fas fa-calendar-alt"></i> Issue Date:</strong><br>
+                                        ${b.cert_issue_date || '-'}
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <strong><i class="fas fa-calendar-check"></i> Expiry Date:</strong><br>
+                                        ${b.cert_expiry_date || '-'}
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <strong><i class="fas fa-certificate"></i> Status:</strong><br>
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Pre-fill new certificate fields with current values for convenience
+                            document.getElementById('new_cert_number').value = '';
+                            document.getElementById('new_issued_by').value = b.cert_issued_by || 'JHA';
+                            document.getElementById('new_issue_date').value = today;
+                            document.getElementById('new_expiry_date').value = defaultExpiry;
+                        }
+                    } else {
+                        showNotification('Error loading business data: ' + data.message, 'error');
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    showNotification('Error: ' + err.message, 'error');
+                });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Load existing images
+        function loadExistingImages() {
+            fetch(`../api/admin_get_business_images.php?id=${businessId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.length > 0) {
+                        const container = document.getElementById('existingImagesContainer');
+                        container.innerHTML = data.data.map(img => `
+                            <div class="existing-image">
+                                <img src="../backend/${img.image_url}" class="image-preview" alt="Restaurant image">
+                                <div class="delete-image" onclick="deleteImage(${img.id})" title="Delete image">×</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        document.getElementById('existingImagesContainer').innerHTML = '<p class="text-muted">No images available</p>';
+                    }
+                })
+                .catch(e => console.error('Error loading images:', e));
+        }
+        
+        function deleteImage(imageId) {
+            if (confirm('Delete this image?')) {
+                showLoading();
+                fetch('../api/admin_delete_image.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image_id: imageId })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        loadExistingImages();
+                        showNotification('Image deleted successfully', 'success');
+                    } else {
+                        showNotification('Error deleting image', 'error');
+                    }
+                })
+                .catch(err => { hideLoading(); showNotification('Error: ' + err.message, 'error'); });
+            }
+        }
+        
+        // New image preview
+        document.getElementById('new_images').addEventListener('change', function(e) {
+            const container = document.getElementById('newImagePreview');
+            container.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const img = document.createElement('img');
+                        img.src = ev.target.result;
+                        img.className = 'image-preview';
+                        container.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+        
+        // Certificate file handlers
+        document.getElementById('certificate_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('certFileName').innerHTML = `<i class="fas fa-file-pdf text-danger"></i> ${file.name}`;
+            }
+        });
+        
+        document.getElementById('update_certificate').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('updateCertFileName').innerHTML = `<i class="fas fa-file-pdf text-danger"></i> ${file.name}`;
+            }
+        });
+        
+        // Submit form - FIXED to properly send certificate data
+        document.getElementById('restaurantForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            updateProgress(10);
+            
+            const formData = new FormData();
+            
+            // Basic fields
+            formData.append('id', businessId);
+            formData.append('business_name', document.getElementById('business_name').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('address', document.getElementById('address').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('prefecture', document.getElementById('prefecture').value);
+            formData.append('postal_code', document.getElementById('postal_code').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('website', document.getElementById('website').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('price_range', document.getElementById('price_range').value);
+            formData.append('opening_hours', document.getElementById('opening_hours').value);
+            formData.append('no_pork', document.getElementById('no_pork').checked ? '1' : '0');
+            formData.append('no_alcohol', document.getElementById('no_alcohol').checked ? '1' : '0');
+            formData.append('muslim_owner', document.getElementById('muslim_owner').checked ? '1' : '0');
+            formData.append('latitude', document.getElementById('latitude').value);
+            formData.append('longitude', document.getElementById('longitude').value);
+            formData.append('halal_status', document.getElementById('halal_status').value);
+            
+            // New images
+            const imageFiles = document.getElementById('new_images').files;
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('new_images[]', imageFiles[i]);
+            }
+            
+            // Check certificate status
+            const hasExistingCert = document.getElementById('has_existing_cert').value === '1';
+            
+            if (!hasExistingCert) {
+                // Adding new certificate (no existing certificate)
+                const certNumber = document.getElementById('cert_number').value;
+                if (certNumber && certNumber.trim() !== '') {
+                    formData.append('cert_number', certNumber);
+                    formData.append('issued_by', document.getElementById('issued_by').value);
+                    formData.append('issue_date', document.getElementById('issue_date').value);
+                    formData.append('expiry_date', document.getElementById('expiry_date').value);
+                    formData.append('is_new_certificate', '1');
+                    
+                    const certFile = document.getElementById('certificate_file').files[0];
+                    if (certFile) {
+                        formData.append('certificate', certFile);
+                    }
+                }
+            } else {
+                // Updating existing certificate - check if user wants to update
+                const newCertNumber = document.getElementById('new_cert_number').value;
+                if (newCertNumber && newCertNumber.trim() !== '') {
+                    formData.append('cert_number', newCertNumber);
+                    formData.append('issued_by', document.getElementById('new_issued_by').value);
+                    formData.append('issue_date', document.getElementById('new_issue_date').value);
+                    formData.append('expiry_date', document.getElementById('new_expiry_date').value);
+                    formData.append('is_update_certificate', '1');
+                    
+                    const certFile = document.getElementById('update_certificate').files[0];
+                    if (certFile) {
+                        formData.append('certificate', certFile);
+                    }
+                }
+            }
+            
+            updateProgress(30);
+            
+            fetch('../api/admin_update_restaurant_complete.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateProgress(100);
+                hideLoading();
+                if (data.success) {
+                    let message = '✅ Restaurant updated successfully!';
+                    if (data.certificate_submitted) {
+                        message = '✅ Restaurant updated! Certificate has been submitted to JHA for verification.';
+                    }
+                    alert(message);
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                alert('Error: ' + err.message);
+            });
+        });
+        
+        // Initialize
+        loadBusinessData();
+        loadExistingImages();
+    </script>
+</body>
+</html>

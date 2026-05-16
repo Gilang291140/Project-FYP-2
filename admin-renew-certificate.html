@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renew Halal Certificate - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #2e7d32; }
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card-custom {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), #1b5e20);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+        .btn-submit {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            width: 100%;
+        }
+        .btn-submit:hover { background: #1b5e20; transform: translateY(-2px); }
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .loading-spinner i {
+            font-size: 48px;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner"></i>
+            <p class="mt-3">Processing...</p>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <i class="fas fa-sync-alt"></i> Renew Halal Certificate
+            </div>
+            <div class="p-4">
+                <div class="info-box" id="certInfo">
+                    <i class="fas fa-spinner fa-spin"></i> Loading certificate information...
+                </div>
+                
+                <form id="renewForm" enctype="multipart/form-data">
+                    <input type="hidden" id="certificate_id">
+                    <input type="hidden" id="business_id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Business Name</label>
+                        <input type="text" class="form-control" id="business_name" readonly>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Previous Certificate Number</label>
+                            <input type="text" class="form-control" id="old_cert_number" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Previous Expiry Date</label>
+                            <input type="text" class="form-control" id="old_expiry_date" readonly>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">New Certificate Information</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">New Certificate Number *</label>
+                        <input type="text" class="form-control" id="cert_number" required placeholder="Enter new certificate number">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Issue Date *</label>
+                            <input type="date" class="form-control" id="issue_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Expiry Date *</label>
+                            <input type="date" class="form-control" id="expiry_date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Document Title</label>
+                        <input type="text" class="form-control" id="doc_title" placeholder="e.g., Halal Certificate 2025" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload New Certificate File *</label>
+                        <div class="file-upload-area" onclick="document.getElementById('cert_file').click()">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                            <p class="mt-2">Click to upload new certificate</p>
+                            <small class="text-muted">PDF, JPG, PNG (Max 10MB)</small>
+                            <input type="file" id="cert_file" style="display:none" accept=".pdf,.jpg,.jpeg,.png" required>
+                        </div>
+                        <div id="fileNameDisplay" class="small text-muted mt-1"></div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Important:</strong> After renewal, the new certificate will be sent to JHA for verification. 
+                        The business status will be set to "Pending" until the new certificate is verified.
+                    </div>
+                    
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-sync-alt"></i> Submit Renewal Request
+                    </button>
+                    
+                    <a href="admin-dashboard.html" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const certId = urlParams.get('id');
+        
+        if (!certId) {
+            alert('No certificate ID specified');
+            window.location.href = 'admin-dashboard.html';
+        }
+        
+        document.getElementById('certificate_id').value = certId;
+        
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+        
+        function loadCertificateDetails() {
+            showLoading();
+            fetch(`../api/get_certificate_details.php?id=${certId}`)
+                .then(r => r.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        const cert = data.data;
+                        document.getElementById('business_id').value = cert.business_id;
+                        document.getElementById('business_name').value = cert.business_name;
+                        document.getElementById('old_cert_number').value = cert.certificate_number || 'N/A';
+                        document.getElementById('old_expiry_date').value = cert.expiry_date || 'N/A';
+                        
+                        document.getElementById('doc_title').value = `Halal Certificate Renewal - ${cert.business_name}`;
+                        
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('issue_date').value = today;
+                        
+                        const nextYear = new Date();
+                        nextYear.setFullYear(nextYear.getFullYear() + 1);
+                        document.getElementById('expiry_date').value = nextYear.toISOString().split('T')[0];
+                        
+                        document.getElementById('certInfo').innerHTML = `
+                            <i class="fas fa-info-circle"></i> 
+                            <strong>Renewing certificate for:</strong> ${cert.business_name}<br>
+                            <strong>Old Certificate:</strong> ${cert.certificate_number || 'N/A'} (Expired on: ${cert.expiry_date || 'N/A'})
+                        `;
+                    } else {
+                        alert('Error loading certificate: ' + data.message);
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    alert('Error: ' + err.message);
+                    window.location.href = 'admin-dashboard.html';
+                });
+        }
+        
+        document.getElementById('cert_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const display = document.getElementById('fileNameDisplay');
+            if (file) {
+                display.innerHTML = `<i class="fas fa-file"></i> ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            } else {
+                display.innerHTML = '';
+            }
+        });
+        
+        document.getElementById('renewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const file = document.getElementById('cert_file').files[0];
+            if (!file) {
+                alert('Please select a certificate file to upload');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to renew this certificate? The business will be set to pending until JHA verifies the new certificate.')) {
+                return;
+            }
+            
+            showLoading();
+            
+            const formData = new FormData();
+            formData.append('old_certificate_id', document.getElementById('certificate_id').value);
+            formData.append('business_id', document.getElementById('business_id').value);
+            formData.append('certificate_number', document.getElementById('cert_number').value);
+            formData.append('issue_date', document.getElementById('issue_date').value);
+            formData.append('expiry_date', document.getElementById('expiry_date').value);
+            formData.append('document_title', document.getElementById('doc_title').value);
+            formData.append('document', file);
+            
+            fetch('../api/admin_renew_certificate.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                alert('Error: ' + err.message);
+            });
+        });
+        
+        loadCertificateDetails();
+    </script>
+</body>
+</html>

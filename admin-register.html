@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Halal Food Japan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .register-header i {
+            font-size: 60px;
+            color: #2e7d32;
+        }
+        .btn-register {
+            background: #2e7d32;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-register:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+        }
+        .alert {
+            border-radius: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .required {
+            color: red;
+        }
+        .role-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .password-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .strength-weak { background: #dc3545; width: 25%; }
+        .strength-medium { background: #ffc107; width: 50%; }
+        .strength-strong { background: #28a745; width: 75%; }
+        .strength-very-strong { background: #2e7d32; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="register-header">
+            <i class="fas fa-user-plus"></i>
+            <h2 class="mt-3">Create Account</h2>
+            <p class="text-muted">Register as Admin or JHA Verifier</p>
+        </div>
+        
+        <div id="alertMessage"></div>
+        
+        <form id="registerForm">
+            <div class="mb-3">
+                <label class="form-label">Full Name <span class="required">*</span></label>
+                <input type="text" class="form-control" id="full_name" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Email <span class="required">*</span></label>
+                <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Username <span class="required">*</span></label>
+                <input type="text" class="form-control" id="username" placeholder="Choose a username" required>
+                <small class="text-muted">Username must be unique and at least 3 characters</small>
+                <div id="usernameFeedback" class="small mt-1"></div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Password <span class="required">*</span></label>
+                <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                <div class="password-strength" id="passwordStrength"></div>
+                <small class="text-muted">Minimum 6 characters</small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Confirm Password <span class="required">*</span></label>
+                <input type="password" class="form-control" id="confirm_password" placeholder="Confirm your password" required>
+                <div id="passwordMatch" class="small mt-1"></div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Role <span class="required">*</span></label>
+                <select class="form-select" id="role" required>
+                    <option value="">Select role...</option>
+                    <option value="admin">Admin - Full access to manage businesses (CRUD operations)</option>
+                    <option value="jha">JHA Verifier - Can verify and approve halal certificates</option>
+                </select>
+            </div>
+            
+            <div class="role-info" id="roleInfo" style="display: none;">
+                <small>
+                    <i class="fas fa-info-circle"></i> 
+                    <span id="roleDescription"></span>
+                </small>
+            </div>
+            
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label small">
+                    I agree to the Terms and Conditions
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-register" id="registerBtn">
+                <i class="fas fa-user-plus"></i> Register Account
+            </button>
+        </form>
+        
+        <hr class="my-4">
+        
+        <p class="text-center mb-0">
+            Already have an account? <a href="admin-login.html">Login here</a>
+        </p>
+        
+        <p class="text-center mt-3">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+        </p>
+    </div>
+    
+    <script>
+        // Password strength checker
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirm_password');
+        
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            
+            const strengthBar = document.getElementById('passwordStrength');
+            strengthBar.className = 'password-strength';
+            
+            if (strength === 1) strengthBar.classList.add('strength-weak');
+            else if (strength === 2) strengthBar.classList.add('strength-medium');
+            else if (strength === 3) strengthBar.classList.add('strength-strong');
+            else if (strength >= 4) strengthBar.classList.add('strength-very-strong');
+            else strengthBar.style.width = '0%';
+            
+            return strength >= 2;
+        }
+        
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirm.length > 0) {
+                if (password === confirm) {
+                    matchDiv.innerHTML = '<i class="fas fa-check-circle text-success"></i> Passwords match';
+                    matchDiv.style.color = '#28a745';
+                    return true;
+                } else {
+                    matchDiv.innerHTML = '<i class="fas fa-times-circle text-danger"></i> Passwords do not match';
+                    matchDiv.style.color = '#dc3545';
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            if (confirmInput.value.length > 0) checkPasswordMatch();
+        });
+        
+        confirmInput.addEventListener('input', checkPasswordMatch);
+        
+        // Role info
+        const roleSelect = document.getElementById('role');
+        const roleInfo = document.getElementById('roleInfo');
+        const roleDescription = document.getElementById('roleDescription');
+        
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'admin') {
+                roleInfo.style.display = 'block';
+                roleDescription.innerHTML = '<strong>Admin Role:</strong> Can manage businesses, add/edit/delete records, generate reports. <span class="text-danger">Cannot verify halal certificates.</span>';
+            } else if (this.value === 'jha') {
+                roleInfo.style.display = 'block';
+                roleDescription.innerHTML = '<strong>JHA Verifier Role:</strong> Can verify halal certificates, approve/reject applications, and manage certification documents. <span class="text-success">Full verification privileges.</span>';
+            } else {
+                roleInfo.style.display = 'none';
+            }
+        });
+        
+        // Username availability check
+        let usernameTimeout;
+        const usernameInput = document.getElementById('username');
+        
+        usernameInput.addEventListener('input', function() {
+            clearTimeout(usernameTimeout);
+            const username = this.value.trim();
+            const feedback = document.getElementById('usernameFeedback');
+            
+            if (username.length < 3) {
+                feedback.innerHTML = '';
+                return;
+            }
+            
+            usernameTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`../api/check_username.php?username=${encodeURIComponent(username)}`);
+                    const data = await response.json();
+                    
+                    if (data.exists) {
+                        feedback.innerHTML = '<i class="fas fa-times-circle text-danger"></i> Username already taken';
+                        this.classList.add('is-invalid');
+                    } else {
+                        feedback.innerHTML = '<i class="fas fa-check-circle text-success"></i> Username available';
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                } catch (error) {
+                    console.error('Error checking username:', error);
+                }
+            }, 500);
+        });
+        
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const full_name = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password').value;
+            const role = document.getElementById('role').value;
+            const terms = document.getElementById('terms').checked;
+            
+            if (!full_name || !email || !username || !password || !confirm_password || !role) {
+                showAlert('Please fill in all required fields', 'danger');
+                return;
+            }
+            
+            if (!terms) {
+                showAlert('Please agree to the Terms and Conditions', 'danger');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showAlert('Username must be at least 3 characters', 'danger');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address', 'danger');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters', 'danger');
+                return;
+            }
+            
+            if (password !== confirm_password) {
+                showAlert('Passwords do not match', 'danger');
+                return;
+            }
+            
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+            
+            try {
+                const response = await fetch('../api/register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name, email, username, password, role })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Registration successful! Please login.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'admin-login.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Registration failed', 'danger');
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Account';
+                }
+            } catch (error) {
+                showAlert('Network error: ' + error.message, 'danger');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Account';
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const alert = alertDiv.querySelector('.alert');
+                if (alert) {
+                    alert.classList.remove('show');
+                    setTimeout(() => alertDiv.innerHTML = '', 150);
+                }
+            }, 5000);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

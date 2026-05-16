@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard - Halal Food Japan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Inter Modern -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0d2818 0%, #1a472a 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header i { font-size: 48px; margin-bottom: 10px; }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 25px;
+        }
+        
+        .sidebar .nav-link.active {
+            background: #ffc107;
+            color: #1a472a;
+            font-weight: bold;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+            transition: margin-left 0.3s;
+        }
+        
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1100;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mobile-menu-toggle:hover {
+            background: #1b5e20;
+            transform: scale(1.02);
+        }
+        
+        /* Admin Avatar & Role Badge */
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(46,125,50,0.1);
+            padding: 6px 16px 6px 8px;
+            border-radius: 60px;
+            backdrop-filter: blur(2px);
+        }
+        
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #1a472a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .role-badge-gradient {
+            background: linear-gradient(95deg, #ffc107, #ffb300);
+            color: #1a472a;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-value { font-size: 32px; font-weight: bold; }
+        
+        .card-custom {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), #1b5e20);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        /* Custom Pagination Styles */
+        .dataTables_wrapper .dataTables_paginate {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #2e7d32;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+        }
+        
+        .badge-certified { background: #28a745; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-pending { background: #ffc107; color: #333; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-verified { background: #17a2b8; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-approved { background: #28a745; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-rejected { background: #dc3545; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-expired { background: #6c757d; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-published { background: #17a2b8; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        
+        .expiry-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .expiry-expired { background: #dc3545; color: white; }
+        .expiry-expiring { background: #ffc107; color: #333; }
+        .expiry-valid { background: #28a745; color: white; }
+        .expiry-warning { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+        
+        /* Custom Loading Overlay dengan Blur */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+        }
+        
+        .loading-spinner i {
+            font-size: 48px;
+            color: var(--primary-color);
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Custom Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .custom-toast {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            border-left: 5px solid;
+            animation: slideInRight 0.3s ease;
+            padding: 12px 18px;
+            margin-top: 12px;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .toast-success { border-left-color: #28a745; }
+        .toast-danger { border-left-color: #dc3545; }
+        .toast-warning { border-left-color: #ffc107; }
+        .toast-info { border-left-color: #17a2b8; }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1080;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.25s;
+        }
+        
+        .scroll-top-btn:hover {
+            background: #1b5e20;
+            transform: scale(1.08);
+        }
+        
+        /* Custom Modal Styles (Cantik) */
+        .custom-modal .modal-content {
+            border-radius: 24px;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .modal-danger-header {
+            background: linear-gradient(95deg, #dc3545, #b02a37);
+            color: white;
+            padding: 1.2rem;
+            border: none;
+        }
+        
+        .modal-danger-header i { font-size: 1.8rem; margin-right: 10px; }
+        
+        .modal-success-header {
+            background: linear-gradient(95deg, #28a745, #1e7e34);
+            color: white;
+        }
+        
+        .expiry-date-combined {
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 70px 16px 20px;
+            }
+            .mobile-menu-toggle {
+                display: block;
+            }
+            .admin-profile .d-none.d-md-block {
+                display: none;
+            }
+            .expiry-date-combined {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner"></i>
+            <p class="mt-3 fw-semibold">Processing...</p>
+        </div>
+    </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top-btn" id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- Logout Modal Cantik -->
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <div class="modal-danger-header d-flex align-items-center">
+                    <i class="fas fa-sign-out-alt fa-fw"></i>
+                    <h5 class="modal-title fw-bold">Confirm Logout</h5>
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <i class="fas fa-question-circle fa-4x text-danger mb-3"></i>
+                    <h5 class="fw-semibold">Ready to leave?</h5>
+                    <p class="text-muted">You will be redirected to the login page. All changes made will be automatically saved.</p>
+                </div>
+                <div class="modal-footer border-0 pb-4 px-4">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger px-4" id="confirmLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Publish Certificate Modal Cantik -->
+    <div class="modal fade" id="publishCertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <div class="modal-header modal-success-header border-0">
+                    <i class="fas fa-certificate fa-lg me-2"></i>
+                    <h5 class="modal-title">Publish Certificate</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-globe-asia fa-3x text-success"></i>
+                    </div>
+                    <p class="text-center">Are you sure you want to publish this certificate to the public dashboard?</p>
+                    <p class="text-muted small text-center"><i class="fas fa-info-circle"></i> It will be visible in My Certificates and public listing.</p>
+                </div>
+                <div class="modal-footer border-0 pb-4">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" id="executePublishBtn">Publish Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-shield"></i>
+            <h5>Admin Panel</h5>
+            <p class="small">Halal Food Japan</p>
+        </div>
+        <div class="nav flex-column">
+            <a class="nav-link active" href="#" onclick="loadDashboard()"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a class="nav-link" href="#" onclick="loadBusinesses()"><i class="fas fa-utensils"></i> Manage Restaurants</a>
+            <a class="nav-link" href="#" onclick="window.open('admin-add-restaurant.html', '_blank')"><i class="fas fa-plus-circle"></i> Add New Restaurant</a>
+            <a class="nav-link" href="#" onclick="window.location.href='admin-my-certificates.html';"><i class="fas fa-certificate"></i> My Certificates</a>
+            <a class="nav-link" href="#" onclick="loadDataIntegration()"><i class="fas fa-database"></i> Data Integration</a>
+            <a class="nav-link" href="#" onclick="loadReports()"><i class="fas fa-chart-line"></i> Reports & Export</a>
+            <a class="nav-link text-danger" href="#" id="logoutBtnNav"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h2 id="pageTitle" class="fw-semibold">Admin Dashboard</h2>
+            <div class="admin-profile">
+                <div class="avatar-circle" id="avatarInitials">AD</div>
+                <div class="d-none d-md-block">
+                    <span id="adminNameDisplay" class="fw-bold text-dark"></span>
+                    <div><span class="role-badge-gradient"><i class="fas fa-shield-alt"></i> Super Admin</span></div>
+                </div>
+            </div>
+        </div>
+        <div id="contentArea">
+            <div class="text-center p-5">
+                <i class="fas fa-spinner fa-spin fa-3x text-success"></i>
+                <p>Loading dashboard...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Business Modal -->
+    <div class="modal fade" id="businessModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalTitle">Business Form</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Import Data from CSV</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="file-upload-area" onclick="document.getElementById('csvFile').click()">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                        <p class="mt-2">Click to select CSV file</p>
+                        <small>Supported format: .csv</small>
+                        <input type="file" id="csvFile" style="display:none" accept=".csv">
+                    </div>
+                    <div id="importPreview" style="display:none; margin-top:15px">
+                        <h6>Preview Data:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead id="previewHeader"></thead>
+                                <tbody id="previewBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmImport()">Import Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        // ============ GLOBAL VARIABLES ============
+        let dataTable = null;
+        let currentEditId = null;
+        let selectedCsvData = [];
+        let refreshInterval = null;
+        let lastUpdateTime = null;
+        let statusChart = null;
+        let cityChart = null;
+        
+        // ============ AUTHENTICATION ============
+        if (!localStorage.getItem('admin_logged_in')) {
+            window.location.href = 'admin-login.html';
+        }
+        
+        const userRole = localStorage.getItem('user_role') || localStorage.getItem('admin_role');
+        if (userRole === 'verifier') { 
+            showNotification('Access denied. This dashboard is for Admin only.', 'danger');
+            window.location.href = 'verifier-dashboard.html'; 
+        }
+        
+        // Admin Name & Avatar
+        const adminName = localStorage.getItem('admin_name') || 'Admin User';
+        document.getElementById('adminNameDisplay').textContent = adminName;
+        const initials = adminName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('avatarInitials').textContent = initials;
+        
+        // ============ HELPER FUNCTIONS ============
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+        
+        function escapeHtml(str) { 
+            if (!str) return ''; 
+            return str.replace(/[&<>]/g, function(m) { 
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]; 
+            }); 
+        }
+        
+        function formatDate(d) { 
+            if (!d) return '-'; 
+            return new Date(d).toLocaleDateString(); 
+        }
+        
+        // ============ CUSTOM TOAST NOTIFICATION (FITUR 6) ============
+        function showNotification(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastDiv = document.createElement('div');
+            let icon = type === 'success' ? 'fa-check-circle' : 
+                      type === 'danger' ? 'fa-exclamation-triangle' : 
+                      type === 'warning' ? 'fa-clock' : 'fa-info-circle';
+            
+            toastDiv.className = `custom-toast toast-${type}`;
+            toastDiv.innerHTML = `
+                <i class="fas ${icon} fa-lg text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'}"></i>
+                <div class="flex-grow-1 small fw-medium">${message}</div>
+                <i class="fas fa-times" style="cursor:pointer" onclick="this.parentElement.remove()"></i>
+            `;
+            
+            toastContainer.appendChild(toastDiv);
+            setTimeout(() => { 
+                if(toastDiv && toastDiv.remove) toastDiv.remove(); 
+            }, 3800);
+        }
+        
+        // ============ MOBILE MENU TOGGLE (FITUR 3) ============
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && 
+                !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+        
+        // ============ SCROLL TO TOP BUTTON (FITUR 8) ============
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollBtn.style.display = 'flex';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        });
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // ============ LOGOUT WITH BEAUTIFUL MODAL (FITUR 1) ============
+        document.getElementById('logoutBtnNav')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            new bootstrap.Modal(document.getElementById('logoutConfirmModal')).show();
+        });
+        
+        document.getElementById('confirmLogoutBtn')?.addEventListener('click', () => {
+            if (refreshInterval) clearInterval(refreshInterval);
+            localStorage.clear();
+            sessionStorage.clear();
+            showNotification('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = 'admin-login.html';
+            }, 500);
+        });
+        
+        // ============ PUBLISH CERTIFICATE MODAL (FITUR 2) ============
+        window.publishCertificate = function(certId) {
+            const modal = new bootstrap.Modal(document.getElementById('publishCertModal'));
+            modal.show();
+            document.getElementById('executePublishBtn').onclick = () => {
+                modal.hide();
+                showNotification(`✅ Certificate #${certId} published successfully to public!`, 'success');
+            };
+        };
+        
+        // ============ REAL-TIME DASHBOARD UPDATES ============
+        function startRealTimeUpdates() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(() => {
+                refreshDashboardStats();
+            }, 5000);
+        }
+
+        function stopRealTimeUpdates() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        function refreshDashboardStats() {
+            fetch('../api/admin_dashboard_stats.php?t=' + new Date().getTime())
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStatCards(data);
+                        
+                        if (data.expiring_soon > 0) {
+                            const banner = document.getElementById('expiryAlertBanner');
+                            if (banner) {
+                                banner.style.display = 'block';
+                                document.getElementById('expiryAlertMessage').textContent = data.expiring_soon;
+                            }
+                        } else {
+                            const banner = document.getElementById('expiryAlertBanner');
+                            if (banner) banner.style.display = 'none';
+                        }
+                        
+                        if (data.expired_certificates > 0) {
+                            showNotification(`⚠️ ${data.expired_certificates} certificate(s) have expired!`, 'warning');
+                        }
+                        
+                        if (lastUpdateTime && data.last_update && data.last_update > lastUpdateTime) {
+                            showNotification('Dashboard updated with new data!', 'info');
+                            loadCharts();
+                            loadRecentBusinesses();
+                            loadCertificateExpiryAlerts();
+                            if (dataTable) {
+                                dataTable.ajax.reload(null, false);
+                            }
+                        }
+                        lastUpdateTime = data.last_update;
+                    }
+                })
+                .catch(e => console.error('Refresh error:', e));
+        }
+
+        function updateStatCards(data) {
+            animateNumber('totalRestaurants', data.total);
+            animateNumber('certifiedCount', data.certified);
+            animateNumber('verifiedCount', data.verified);
+            animateNumber('pendingCount', data.pending);
+        }
+
+        function animateNumber(elementId, newValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const oldValue = parseInt(element.textContent) || 0;
+            if (oldValue === newValue) return;
+            
+            const duration = 500;
+            const steps = 20;
+            const increment = (newValue - oldValue) / steps;
+            let currentStep = 0;
+            
+            const timer = setInterval(() => {
+                currentStep++;
+                const currentValue = Math.round(oldValue + (increment * currentStep));
+                element.textContent = currentValue;
+                if (currentStep >= steps) {
+                    element.textContent = newValue;
+                    clearInterval(timer);
+                }
+            }, duration / steps);
+        }
+
+        function refreshAfterCRUD() {
+            loadBusinesses();
+            loadDashboard();
+            refreshDashboardStats();
+            showNotification('Data has been updated!', 'success');
+        }
+        
+        // ============ CERTIFICATE EXPIRY ALERTS ============
+        function loadCertificateExpiryAlerts() {
+            fetch('../api/admin_get_expiring_certificates.php')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('expiryAlertContent');
+                    if (!container) return;
+                    
+                    if (data.success && data.data) {
+                        let html = `
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="alert alert-danger text-center">
+                                        <h5 class="mb-0">${data.stats?.expired || 0}</h5>
+                                        <small>Expired Certificates</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="alert alert-warning text-center">
+                                        <h5 class="mb-0">${data.stats?.expiring_soon || 0}</h5>
+                                        <small>Expiring Soon (≤30 days)</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="alert alert-success text-center">
+                                        <h5 class="mb-0">${data.stats?.valid || 0}</h5>
+                                        <small>Valid Certificates</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="alert alert-secondary text-center">
+                                        <h5 class="mb-0">${data.stats?.no_expiry || 0}</h5>
+                                        <small>No Expiry Date</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        const expiredCerts = data.data.filter(c => c.expiry_status === 'expired');
+                        if (expiredCerts.length > 0) {
+                            html += `<h6 class="text-danger mt-3"><i class="fas fa-times-circle"></i> Expired Certificates</h6>
+                                <div class="table-responsive"><table class="table table-sm table-danger"><thead><tr><th>Business</th><th>Certificate #</th><th>Expiry Date</th><th>Days Overdue</th><th>Action</th></tr></thead><tbody>`;
+                            expiredCerts.forEach(cert => {
+                                html += `<tr>
+                                    <td><strong>${escapeHtml(cert.business_name)}</strong></td>
+                                    <td>${cert.certificate_number || '-'}</td>
+                                    <td><span class="text-danger">${cert.expiry_date}</span></td>
+                                    <td><span class="badge bg-danger">${Math.abs(cert.days_until_expiry)} days overdue</span></td>
+                                    <td><button class="btn btn-sm btn-warning" onclick="renewCertificate(${cert.id})">Renew</button></td>
+                                </tr>`;
+                            });
+                            html += `</tbody>}</div>`;
+                        }
+                        
+                        const expiringCerts = data.data.filter(c => c.expiry_status === 'expiring_soon');
+                        if (expiringCerts.length > 0) {
+                            html += `<h6 class="text-warning mt-3"><i class="fas fa-clock"></i> Certificates Expiring Soon</h6>
+                                <div class="table-responsive"><table class="table table-sm table-warning"><thead><tr><th>Business</th><th>Certificate #</th><th>Expiry Date</th><th>Days Left</th><th>Action</th></tr></thead><tbody>`;
+                            expiringCerts.forEach(cert => {
+                                html += `<tr>
+                                    <td><strong>${escapeHtml(cert.business_name)}</strong></td>
+                                    <td>${cert.certificate_number || '-'}</td>
+                                    <td>${cert.expiry_date}</td>
+                                    <td><span class="badge bg-warning expiry-warning">${cert.days_until_expiry} days left</span></td>
+                                    <td><button class="btn btn-sm btn-primary" onclick="renewCertificate(${cert.id})">Renew</button></td>
+                                </tr>`;
+                            });
+                            html += `</tbody>}</div>`;
+                        }
+                        
+                        if (expiredCerts.length === 0 && expiringCerts.length === 0) {
+                            html += `<div class="alert alert-success text-center"><i class="fas fa-check-circle"></i> All certificates are valid! No expiring certificates at this time.</div>`;
+                        }
+                        
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<div class="alert alert-info">No certificate data available</div>';
+                    }
+                })
+                .catch(e => {
+                    console.error('Error loading expiry alerts:', e);
+                    const container = document.getElementById('expiryAlertContent');
+                    if (container) container.innerHTML = '<div class="alert alert-info">Unable to load certificate status</div>';
+                });
+        }
+        
+        function renewCertificate(certId) {
+            window.open(`admin-renew-certificate.html?id=${certId}`, '_blank');
+        }
+        
+        // ============ DASHBOARD ============
+        function loadDashboard() {
+            document.getElementById('pageTitle').textContent = 'Dashboard';
+            document.getElementById('contentArea').innerHTML = `
+                <div class="row">
+                    <div class="col-md-3"><div class="stat-card" onclick="loadBusinesses()"><div class="stat-value" id="totalRestaurants">-</div><div class="text-muted">Total Restaurants</div></div></div>
+                    <div class="col-md-3"><div class="stat-card" onclick="loadBusinesses()"><div class="stat-value" id="certifiedCount">-</div><div class="text-muted">Halal Certified</div></div></div>
+                    <div class="col-md-3"><div class="stat-card"><div class="stat-value" id="verifiedCount">-</div><div class="text-muted">Verified</div></div></div>
+                    <div class="col-md-3"><div class="stat-card"><div class="stat-value" id="pendingCount">-</div><div class="text-muted">Pending</div></div></div>
+                </div>
+                
+                <div class="row mt-2" id="expiryAlertBanner" style="display:none;">
+                    <div class="col-12">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Certificate Expiry Alert!</strong> 
+                            <span id="expiryAlertMessage"></span> certificates are expiring within 30 days.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card-custom" id="expiryAlertCard">
+                            <div class="card-header-custom" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+                                <i class="fas fa-exclamation-triangle"></i> Certificate Expiry Alerts
+                            </div>
+                            <div class="p-3" id="expiryAlertContent">
+                                <div class="text-center">Loading certificate status...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6"><div class="card-custom"><div class="card-header-custom"><i class="fas fa-chart-pie"></i> Halal Status Distribution</div><div class="p-3"><canvas id="statusChart" height="250"></canvas></div></div></div>
+                    <div class="col-md-6"><div class="card-custom"><div class="card-header-custom"><i class="fas fa-chart-bar"></i> Restaurants by City</div><div class="p-3"><canvas id="cityChart" height="250"></canvas></div></div></div>
+                </div>
+                <div class="row mt-4"><div class="col-12"><div class="card-custom"><div class="card-header-custom"><i class="fas fa-history"></i> Recently Added</div><div class="p-3"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Name</th><th>Category</th><th>City</th><th>Status</th><th>Certificate & Expiry</th><th>Date</th></tr></thead><tbody id="recentBusinesses"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody></table></div></div></div></div></div>
+            `;
+            
+            loadDashboardStats();
+            loadCharts();
+            loadRecentBusinesses();
+            loadCertificateExpiryAlerts();
+            startRealTimeUpdates();
+        }
+        
+        function loadDashboardStats() {
+            fetch('../api/admin_dashboard_stats.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('totalRestaurants').textContent = data.total || 0;
+                        document.getElementById('certifiedCount').textContent = data.certified || 0;
+                        document.getElementById('verifiedCount').textContent = data.verified || 0;
+                        document.getElementById('pendingCount').textContent = data.pending || 0;
+                        
+                        if (data.expiring_soon > 0) {
+                            document.getElementById('expiryAlertBanner').style.display = 'block';
+                            document.getElementById('expiryAlertMessage').textContent = data.expiring_soon;
+                        } else {
+                            document.getElementById('expiryAlertBanner').style.display = 'none';
+                        }
+                    }
+                })
+                .catch(e => console.error('Error loading stats:', e));
+        }
+        
+        function loadRecentBusinesses() {
+            fetch('../api/admin_get_businesses.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        let recent = data.data.slice(0, 5);
+                        document.getElementById('recentBusinesses').innerHTML = recent.map(r => {
+                            let expiryHtml = '<span class="text-muted">No certificate</span>';
+                            let statusBadge = '';
+                            
+                            if (r.halal_status === 'certified') {
+                                statusBadge = '<span class="badge-certified">Certified</span>';
+                            } else if (r.halal_status === 'verified') {
+                                statusBadge = '<span class="badge-verified">Verified</span>';
+                            } else if (r.halal_status === 'expired') {
+                                statusBadge = '<span class="badge-expired">EXPIRED</span>';
+                            } else if (r.halal_status === 'rejected') {
+                                statusBadge = '<span class="badge-rejected">Rejected</span>';
+                            } else {
+                                statusBadge = '<span class="badge-pending">Pending</span>';
+                            }
+                            
+                            let combinedCertExpiry = '';
+                            
+                            if (r.cert_number && (r.halal_status === 'certified' || r.halal_status === 'verified')) {
+                                const certNumber = r.cert_number;
+                                const issueDate = r.cert_issue_date ? r.cert_issue_date : '-';
+                                const expiryDate = r.cert_expiry_date;
+                                
+                                if (expiryDate) {
+                                    const expiryDateObj = new Date(expiryDate);
+                                    const today = new Date();
+                                    const daysLeft = Math.ceil((expiryDateObj - today) / (1000 * 60 * 60 * 24));
+                                    
+                                    if (daysLeft <= 0) {
+                                        combinedCertExpiry = `
+                                            <div class="expiry-date-combined">
+                                                <small><strong>Cert #:</strong> ${escapeHtml(certNumber)}</small><br>
+                                                <small><strong>Issue:</strong> ${issueDate}</small><br>
+                                                <span class="expiry-badge expiry-expired expiry-warning">⚠️ EXPIRED (${expiryDate})</span>
+                                            </div>
+                                        `;
+                                        statusBadge = '<span class="badge-expired">EXPIRED</span>';
+                                    } else if (daysLeft <= 30) {
+                                        combinedCertExpiry = `
+                                            <div class="expiry-date-combined">
+                                                <small><strong>Cert #:</strong> ${escapeHtml(certNumber)}</small><br>
+                                                <small><strong>Issue:</strong> ${issueDate}</small><br>
+                                                <span class="expiry-badge expiry-expiring expiry-warning">⚠️ Expires: ${expiryDate} (${daysLeft} days left)</span>
+                                            </div>
+                                        `;
+                                    } else {
+                                        combinedCertExpiry = `
+                                            <div class="expiry-date-combined">
+                                                <small><strong>Cert #:</strong> ${escapeHtml(certNumber)}</small><br>
+                                                <small><strong>Issue:</strong> ${issueDate}</small><br>
+                                                <span class="expiry-badge expiry-valid">✓ Valid until: ${expiryDate}</span>
+                                            </div>
+                                        `;
+                                    }
+                                } else {
+                                    combinedCertExpiry = `
+                                        <div class="expiry-date-combined">
+                                            <small><strong>Cert #:</strong> ${escapeHtml(certNumber)}</small><br>
+                                            <small><strong>Issue:</strong> ${issueDate}</small><br>
+                                            <span class="text-muted">No expiry date</span>
+                                        </div>
+                                    `;
+                                }
+                            } else if (r.cert_number && r.halal_status === 'pending') {
+                                combinedCertExpiry = `
+                                    <div class="expiry-date-combined">
+                                        <small><strong>Cert #:</strong> ${escapeHtml(r.cert_number)}</small><br>
+                                        <span class="expiry-badge expiry-pending">⏳ Pending Verification</span>
+                                    </div>
+                                `;
+                            } else {
+                                combinedCertExpiry = '<span class="text-muted">No certificate</span>';
+                            }
+                            
+                            return `
+                                <tr>
+                                    <td><strong>${escapeHtml(r.business_name)}</strong></td>
+                                    <td>${r.category || '-'}</td>
+                                    <td>${r.city || '-'}</td>
+                                    <td>${statusBadge}</td>
+                                    <td>${combinedCertExpiry}</td>
+                                    <td>${formatDate(r.created_at)}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                })
+                .catch(e => console.error('Error loading recent businesses:', e));
+        }
+        
+        function loadCharts() {
+            fetch('../api/admin_chart_data.php')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        if (statusChart) statusChart.destroy();
+                        if (cityChart) cityChart.destroy();
+                        
+                        const statusCtx = document.getElementById('statusChart').getContext('2d');
+                        statusChart = new Chart(statusCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Certified', 'Verified', 'Pending', 'Expired', 'Rejected'],
+                                datasets: [{
+                                    data: [data.certified || 0, data.verified || 0, data.pending || 0, data.expired || 0, data.rejected || 0],
+                                    backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#6c757d', '#dc3545']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                                return `${label}: ${value} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        
+                        if (data.cities && data.cities.length > 0) {
+                            const cityCtx = document.getElementById('cityChart').getContext('2d');
+                            cityChart = new Chart(cityCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: data.cities,
+                                    datasets: [{
+                                        label: 'Number of Restaurants',
+                                        data: data.city_counts,
+                                        backgroundColor: '#2e7d32',
+                                        borderColor: '#1b5e20',
+                                        borderWidth: 1,
+                                        borderRadius: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: true,
+                                    scales: { 
+                                        y: { 
+                                            beginAtZero: true, 
+                                            title: { display: true, text: 'Number of Restaurants', font: { weight: 'bold' } },
+                                            ticks: { stepSize: 1, precision: 0 }
+                                        },
+                                        x: { 
+                                            title: { display: true, text: 'Cities', font: { weight: 'bold' } },
+                                            ticks: { autoSkip: true, maxRotation: 45, minRotation: 45 }
+                                        }
+                                    },
+                                    plugins: {
+                                        tooltip: { callbacks: { label: function(context) { return `Restaurants: ${context.raw}`; } } },
+                                        legend: { position: 'top' }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading charts:', error));
+        }
+        
+        // ============ MANAGE RESTAURANTS with Custom Pagination ============
+        function loadBusinesses() {
+            document.getElementById('pageTitle').textContent = 'Manage Restaurants';
+            document.getElementById('contentArea').innerHTML = `<div class="table-container"><div class="d-flex justify-content-between mb-3"><h5><i class="fas fa-utensils"></i> All Restaurants</h5><div><button class="btn btn-success me-2" onclick="window.open('admin-add-restaurant.html', '_blank')"><i class="fas fa-plus"></i> Add</button><button class="btn btn-info" onclick="exportBusinesses()"><i class="fas fa-download"></i> Export</button></div></div><hr><table id="businessTable" class="table table-hover"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>City</th><th>Status</th><th>Certificate Expiry</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody>}</div>`;
+            
+            if(dataTable) dataTable.destroy();
+            
+            dataTable = $('#businessTable').DataTable({
+                ajax: { url: '../api/admin_get_businesses.php', dataSrc: 'data' },
+                columns: [
+                    { data: 'id' },
+                    { data: 'business_name' },
+                    { data: 'category' },
+                    { data: 'city' },
+                    {
+                        data: 'halal_status',
+                        render: function(d, type, row) {
+                            const certStatus = row.cert_status || 'none';
+                            const hasCertificate = row.cert_number ? true : false;
+                            const isCertificateComplete = (row.cert_number && row.cert_issue_date && row.cert_expiry_date && row.cert_issued_by);
+                            
+                            if (d === 'pending' && isCertificateComplete && certStatus === 'pending') {
+                                return '<span class="badge-pending">⏳ Certificate Sent to JHA - Waiting Verification</span>';
+                            }
+                            else if (d === 'pending' && (!hasCertificate || !isCertificateComplete)) {
+                                return '<span class="badge-secondary">📋 No Certificate - Edit to Add Certificate</span>';
+                            }
+                            else if (d === 'certified') {
+                                let certBody = row.cert_issued_by || 'JHA';
+                                let certBodyDisplay = '';
+                                if (certBody === 'JHA') certBodyDisplay = 'JHA';
+                                else if (certBody === 'JAKIM') certBodyDisplay = 'JAKIM';
+                                else if (certBody === 'MUIS') certBodyDisplay = 'MUIS';
+                                else certBodyDisplay = 'Other';
+                                return `<span class="badge-certified">✓ Certified by ${certBodyDisplay}</span>`;
+                            }
+                            else if (d === 'verified') {
+                                return '<span class="badge-verified">✓ Verified (No Certificate)</span>';
+                            }
+                            else if (d === 'rejected') {
+                                return '<span class="badge-rejected">✗ Rejected</span>';
+                            }
+                            else if (d === 'expired') {
+                                return '<span class="badge-expired">⚠️ Expired</span>';
+                            }
+                            return d;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(d) {
+                            const certStatus = d.cert_status || 'none';
+                            const hasCertNumber = d.cert_number ? true : false;
+                            const isComplete = (d.cert_number && d.cert_issue_date && d.cert_expiry_date && d.cert_issued_by);
+                            
+                            if (certStatus === 'pending' && isComplete) {
+                                return '<span class="expiry-badge expiry-pending"><i class="fas fa-clock"></i> ⏳ Sent to JHA - Pending Verification</span>';
+                            }
+                            else if (certStatus === 'verified') {
+                                if (d.cert_expiry_date) {
+                                    const expiryDate = new Date(d.cert_expiry_date);
+                                    const today = new Date();
+                                    const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+
+                                    if (daysLeft <= 0) {
+                                        return `<span class="expiry-badge expiry-expired">
+                                            <i class="fas fa-times-circle"></i> EXPIRED (${d.cert_expiry_date})
+                                        </span>`;
+                                    } else if (daysLeft <= 30) {
+                                        return `<span class="expiry-badge expiry-expiring">
+                                            <i class="fas fa-clock"></i> Expiring (${d.cert_expiry_date})
+                                        </span>`;
+                                    } else {
+                                        return `<span class="expiry-badge expiry-valid">
+                                            <i class="fas fa-check-circle"></i> Valid until ${d.cert_expiry_date}
+                                        </span>`;
+                                    }
+                                }
+                                return '<span class="text-muted">No expiry date</span>';
+                            }
+                            else if (certStatus === 'rejected') {
+                                return '<span class="expiry-badge expiry-rejected"><i class="fas fa-times-circle"></i> Certificate Rejected</span>';
+                            }
+                            else if (hasCertNumber && !isComplete) {
+                                return '<span class="expiry-badge expiry-incomplete"><i class="fas fa-exclamation-triangle"></i> ⚠️ Incomplete - Edit to complete</span>';
+                            }
+                            else {
+                                return '<span class="text-muted"><i class="fas fa-times-circle"></i> No certificate</span>';
+                            }
+                        }
+                    },
+                    { data: 'created_at', render: d => formatDate(d) },
+                    { data: null, render: d => `<button class="btn btn-sm btn-info me-1" onclick="editBusiness(${d.id})"><i class="fas fa-edit"></i> Edit</button><button class="btn btn-sm btn-danger" onclick="deleteBusiness(${d.id})"><i class="fas fa-trash"></i> Delete</button>` }
+                ],
+                pageLength: 10, 
+                order: [[0,'desc']],
+                language: {
+                    paginate: {
+                        first: '« First',
+                        previous: '← Previous',
+                        next: 'Next →',
+                        last: 'Last »'
+                    },
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries"
+                },
+                drawCallback: function() {
+                    $('.expiry-warning').each(function() {
+                        $(this).addClass('expiry-warning');
+                    });
+                    
+                    $('.dataTables_paginate .paginate_button').css({
+                        'padding': '8px 16px',
+                        'margin': '0 5px',
+                        'border-radius': '8px',
+                        'border': '1px solid #ddd',
+                        'background': 'white',
+                        'color': '#2e7d32',
+                        'cursor': 'pointer',
+                        'transition': 'all 0.3s'
+                    });
+                    
+                    $('.dataTables_paginate .paginate_button.current').css({
+                        'background': '#2e7d32',
+                        'color': 'white',
+                        'border-color': '#2e7d32'
+                    });
+                    
+                    $('.dataTables_paginate .paginate_button:hover:not(.disabled):not(.current)').css({
+                        'background': '#2e7d32',
+                        'color': 'white',
+                        'border-color': '#2e7d32'
+                    });
+                }
+            });
+        }
+        
+        function editBusiness(id) {
+            window.open(`admin-edit-restaurant.html?id=${id}`, '_blank');
+        }
+        
+        function deleteBusiness(id) {
+            if (confirm('Delete this restaurant? This action cannot be undone!')) {
+                showLoading();
+                fetch(`../api/admin_delete_business.php?id=${id}`, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(data => {
+                        hideLoading();
+                        if (data.success) {
+                            showNotification('✅ Restaurant deleted successfully!', 'success');
+                            refreshAfterCRUD();
+                        } else {
+                            showNotification('❌ Error: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(err => {
+                        hideLoading();
+                        showNotification('Error: ' + err.message, 'danger');
+                    });
+            }
+        }
+        
+        function exportBusinesses() {
+        // Gunakan API export report yang sudah ada
+        window.open('../api/admin_export_report.php?format=excel', '_blank');
+        showNotification('Export started...', 'info');
+    }
+        
+        // ============ DATA INTEGRATION ============
+        function loadDataIntegration() {
+            document.getElementById('pageTitle').textContent = 'Data Integration';
+            document.getElementById('contentArea').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom"><i class="fas fa-file-csv"></i> Import from CSV</div>
+                            <div class="p-4">
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-file-csv fa-4x text-success mb-3"></i>
+                                    <h5>Bulk Import Restaurants</h5>
+                                    <p class="text-muted">Import multiple restaurants from a CSV file</p>
+                                </div>
+                                <form id="csvImportForm" enctype="multipart/form-data">
+                                    <div class="file-upload-area mb-3" onclick="document.getElementById('csvFileInput').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2">Click to select CSV file</p>
+                                        <small class="text-muted">Supported format: .csv (Max 10MB)</small>
+                                        <input type="file" id="csvFileInput" name="csv_file" style="display:none" accept=".csv">
+                                    </div>
+                                    <div id="selectedFileName" class="small text-muted text-center mb-3"></div>
+                                    <div id="importProgress" class="progress-bar mb-3" style="display:none; height:5px;">
+                                        <div id="importProgressFill" class="progress-fill" style="width:0%; height:100%; background:#28a745;"></div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100" id="importBtn">
+                                        <i class="fas fa-upload"></i> Import CSV
+                                    </button>
+                                </form>
+                                <hr>
+                                <div class="text-center">
+                                    <a href="../api/download_sample_csv.php" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                        <i class="fas fa-download"></i> Download Sample CSV
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom"><i class="fas fa-cloud-download-alt"></i> Sync External Sources</div>
+                            <div class="p-4">
+                                <div class="d-grid gap-3">
+                                    <button class="btn btn-outline-primary" onclick="syncJAKIM()"><i class="fas fa-cloud-download-alt"></i> Sync from JAKIM Database</button>
+                                    <button class="btn btn-outline-primary" onclick="syncMUIS()"><i class="fas fa-cloud-download-alt"></i> Sync from MUIS Database</button>
+                                    <button class="btn btn-outline-primary" onclick="syncLocalAPI()"><i class="fas fa-cloud-download-alt"></i> Sync from Local Halal API</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card-custom">
+                            <div class="card-header-custom"><i class="fas fa-history"></i> Import History</div>
+                            <div class="p-3" id="importHistoryContainer">
+                                <div class="text-center text-muted py-3">
+                                    <i class="fas fa-database fa-2x mb-2"></i>
+                                    <p>No import history yet</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const fileInput = document.getElementById('csvFileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    const fileNameDisplay = document.getElementById('selectedFileName');
+                    if (file) {
+                        const fileSize = (file.size / 1024).toFixed(2);
+                        fileNameDisplay.innerHTML = `<i class="fas fa-file-csv text-success"></i> Selected: ${file.name} (${fileSize} KB)`;
+                        fileNameDisplay.style.color = '#28a745';
+                    } else {
+                        fileNameDisplay.innerHTML = '';
+                    }
+                });
+            }
+            
+            const importForm = document.getElementById('csvImportForm');
+            if (importForm) {
+                importForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    confirmImport();
+                });
+            }
+            
+            loadImportHistory();
+        }
+
+        function loadImportHistory() {
+            fetch('../api/get_import_history.php')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('importHistoryContainer');
+                    if (data.success && data.data && data.data.length > 0) {
+                        let html = `<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Date</th><th>File Name</th><th>Imported</th><th>Failed</th><th>Status</th></tr></thead><tbody>`;
+                        data.data.forEach(history => {
+                            html += `<tr>
+                                <td>${formatDate(history.import_date)}</td>
+                                <td>${history.file_name || 'CSV Import'}</td>
+                                <td><span class="badge bg-success">${history.imported}</span></td>
+                                <td><span class="badge bg-danger">${history.failed}</span></td>
+                                <td><i class="fas ${history.failed > 0 ? 'fa-exclamation-triangle text-warning' : 'fa-check-circle text-success'}"></i> ${history.failed > 0 ? 'Partial Success' : 'Complete'}</td>
+                            </tr>`;
+                        });
+                        html += `</tbody>}</div>`;
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = `<div class="text-center text-muted py-3"><i class="fas fa-database fa-2x mb-2"></i><p>No import history yet. Start by importing a CSV file!</p></div>`;
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function confirmImport() {
+            const fileInput = document.getElementById('csvFileInput');
+            const file = fileInput ? fileInput.files[0] : null;
+            
+            if (!file) {
+                alert('Please select a CSV file first');
+                return;
+            }
+            
+            if (!file.name.endsWith('.csv')) {
+                alert('Please select a valid CSV file');
+                return;
+            }
+            
+            showLoading();
+            
+            const progressDiv = document.getElementById('importProgress');
+            const progressFill = document.getElementById('importProgressFill');
+            if (progressDiv) progressDiv.style.display = 'block';
+            if (progressFill) progressFill.style.width = '30%';
+            
+            const formData = new FormData();
+            formData.append('csv_file', file);
+            
+            fetch('../api/admin_import_csv.php', { 
+                method: 'POST', 
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => { 
+                hideLoading();
+                if (progressDiv) progressDiv.style.display = 'none';
+                if (progressFill) progressFill.style.width = '0%';
+                
+                if (data.success){ 
+                    showNotification(`✅ Import completed! Imported: ${data.imported} records, Failed: ${data.failed || 0}`, 'success');
+                    if (fileInput) fileInput.value = '';
+                    document.getElementById('selectedFileName').innerHTML = '';
+                    loadBusinesses(); 
+                    loadDashboard();
+                    loadImportHistory();
+                } else { 
+                    showNotification('❌ Import failed: ' + data.message, 'danger'); 
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                if (progressDiv) progressDiv.style.display = 'none';
+                showNotification('Error: ' + error.message, 'danger');
+            });
+        }
+
+        function syncJAKIM() { 
+            if(confirm('Sync data from JAKIM database? This may take a few moments.')) {
+                showLoading(); 
+                fetch('../api/admin_sync_jakim.php')
+                    .then(r=>r.json())
+                    .then(data=>{ 
+                        hideLoading(); 
+                        if(data.success){
+                            showNotification('✅ ' + (data.message || 'Sync completed successfully!'), 'success');
+                            loadBusinesses();
+                            loadDashboard();
+                        } else {
+                            showNotification('❌ Sync failed: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(err=>{ hideLoading(); showNotification('Error: '+err.message, 'danger'); });
+            }
+        }
+
+        function syncMUIS() { 
+            if(confirm('Sync data from MUIS database? This may take a few moments.')) {
+                showLoading(); 
+                fetch('../api/admin_sync_muis.php')
+                    .then(r=>r.json())
+                    .then(data=>{ 
+                        hideLoading(); 
+                        if(data.success){
+                            showNotification('✅ ' + (data.message || 'Sync completed successfully!'), 'success');
+                            loadBusinesses();
+                            loadDashboard();
+                        } else {
+                            showNotification('❌ Sync failed: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(err=>{ hideLoading(); showNotification('Error: '+err.message, 'danger'); });
+            }
+        }
+
+        function syncLocalAPI() { 
+            if(confirm('Sync data from Local Halal API? This may take a few moments.')) {
+                showLoading(); 
+                fetch('../api/admin_sync_local.php')
+                    .then(r=>r.json())
+                    .then(data=>{ 
+                        hideLoading(); 
+                        if(data.success){
+                            showNotification('✅ ' + (data.message || 'Sync completed successfully!'), 'success');
+                            loadBusinesses();
+                            loadDashboard();
+                        } else {
+                            showNotification('❌ Sync failed: ' + data.message, 'danger');
+                        }
+                    })
+                    .catch(err=>{ hideLoading(); showNotification('Error: '+err.message, 'danger'); });
+            }
+        }
+
+        // ============ REPORTS & ANALYTICS (FIXED - Certificate Data Tidak Kosong) ============
+        function loadReports() {
+            document.getElementById('pageTitle').textContent = 'Reports & Analytics';
+            document.getElementById('contentArea').innerHTML = `
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom" style="background: linear-gradient(135deg, #2e7d32, #1b5e20);">
+                                <i class="fas fa-chart-line"></i> Analytics Dashboard
+                            </div>
+                            <div class="p-4">
+                                <div class="row mb-4">
+                                    <div class="col-md-3">
+                                        <div class="stat-card text-center" style="cursor: pointer;" onclick="generateReport('overview')">
+                                            <i class="fas fa-chart-pie fa-3x text-success mb-3"></i>
+                                            <h5>Overview Report</h5>
+                                            <small class="text-muted">General statistics</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card text-center" style="cursor: pointer;" onclick="generateReport('certificates')">
+                                            <i class="fas fa-certificate fa-3x text-warning mb-3"></i>
+                                            <h5>Certificate Report</h5>
+                                            <small class="text-muted">Expiry & status</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card text-center" style="cursor: pointer;" onclick="generateReport('cities')">
+                                            <i class="fas fa-city fa-3x text-info mb-3"></i>
+                                            <h5>City Distribution</h5>
+                                            <small class="text-muted">By location</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-card text-center" style="cursor: pointer;" onclick="generateReport('trends')">
+                                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                            <h5>Trend Analysis</h5>
+                                            <small class="text-muted">Monthly trends</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5><i class="fas fa-download text-success"></i> Export Reports</h5>
+                                            <div>
+                                                <button class="btn btn-success btn-sm me-2" onclick="exportReport('excel')">
+                                                    <i class="fas fa-file-excel"></i> Export Excel
+                                                </button>
+                                                <button class="btn btn-danger btn-sm me-2" onclick="exportReport('pdf')">
+                                                    <i class="fas fa-file-pdf"></i> Export PDF
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm" onclick="printReport()">
+                                                    <i class="fas fa-print"></i> Print
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="analyticsContent" class="mt-4">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                                        <h5>Select a report type above</h5>
+                                        <p class="text-muted">Click on any report card to view detailed analytics</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateReport(type) {
+            showLoading();
+            
+            switch(type) {
+                case 'overview':
+                    generateOverviewReport();
+                    break;
+                case 'certificates':
+                    generateCertificateReportFixed();
+                    break;
+                case 'cities':
+                    generateCityReport();
+                    break;
+                case 'trends':
+                    generateTrendReport();
+                    break;
+                default:
+                    generateOverviewReport();
+            }
+        }
+
+        function generateOverviewReport() {
+            fetch('../api/admin_dashboard_stats.php')
+                .then(r => r.json())
+                .then(stats => {
+                    fetch('../api/admin_get_businesses.php')
+                        .then(r => r.json())
+                        .then(data => {
+                            hideLoading();
+                            
+                            const businesses = data.data || [];
+                            const totalBusinesses = businesses.length;
+                            const certifiedCount = businesses.filter(b => b.halal_status === 'certified').length;
+                            const verifiedCount = businesses.filter(b => b.halal_status === 'verified').length;
+                            const pendingCount = businesses.filter(b => b.halal_status === 'pending').length;
+                            const rejectedCount = businesses.filter(b => b.halal_status === 'rejected').length;
+                            const expiredCount = businesses.filter(b => b.halal_status === 'expired').length;
+                            
+                            const categories = {};
+                            businesses.forEach(b => {
+                                const cat = b.category || 'other';
+                                categories[cat] = (categories[cat] || 0) + 1;
+                            });
+                            
+                            const thirtyDaysAgo = new Date();
+                            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                            const recentAdditions = businesses.filter(b => {
+                                return b.created_at && new Date(b.created_at) >= thirtyDaysAgo;
+                            }).length;
+                            
+                            const html = `
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="mb-4"><i class="fas fa-chart-pie text-success"></i> Overview Report</h4>
+                                        <hr>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-3">
+                                        <div class="alert alert-success text-center">
+                                            <h3 class="mb-0">${totalBusinesses}</h3>
+                                            <small>Total Restaurants</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="alert alert-primary text-center">
+                                            <h3 class="mb-0">${recentAdditions}</h3>
+                                            <small>Added (Last 30 days)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="alert alert-info text-center">
+                                            <h3 class="mb-0">${certifiedCount}</h3>
+                                            <small>Certified</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="alert alert-warning text-center">
+                                            <h3 class="mb-0">${pendingCount}</h3>
+                                            <small>Pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card-custom">
+                                            <div class="card-header-custom">
+                                                <i class="fas fa-chart-pie"></i> Status Distribution
+                                            </div>
+                                            <div class="p-3">
+                                                <canvas id="reportStatusChart" height="250"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-custom">
+                                            <div class="card-header-custom">
+                                                <i class="fas fa-chart-bar"></i> Category Distribution
+                                            </div>
+                                            <div class="p-3">
+                                                <canvas id="reportCategoryChart" height="250"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card-custom">
+                                            <div class="card-header-custom">
+                                                <i class="fas fa-list"></i> Summary Table
+                                            </div>
+                                            <div class="p-3">
+                                                <table class="table table-bordered">
+                                                    <thead class="table-success">
+                                                        <tr><th>Metric</th><th>Count</th><th>Percentage</th></tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr><td>✅ Certified</td><td>${certifiedCount}</td><td>${((certifiedCount/totalBusinesses)*100).toFixed(1)}%</td></tr>
+                                                        <tr><td>🔵 Verified</td><td>${verifiedCount}</td><td>${((verifiedCount/totalBusinesses)*100).toFixed(1)}%</td></tr>
+                                                        <tr><td>⏳ Pending</td><td>${pendingCount}</td><td>${((pendingCount/totalBusinesses)*100).toFixed(1)}%</td></tr>
+                                                        <tr><td>❌ Rejected</td><td>${rejectedCount}</td><td>${((rejectedCount/totalBusinesses)*100).toFixed(1)}%</td></tr>
+                                                        <tr><td>⚠️ Expired</td><td>${expiredCount}</td><td>${((expiredCount/totalBusinesses)*100).toFixed(1)}%</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            document.getElementById('analyticsContent').innerHTML = html;
+                            
+                            const statusCtx = document.getElementById('reportStatusChart').getContext('2d');
+                            new Chart(statusCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['Certified', 'Verified', 'Pending', 'Rejected', 'Expired'],
+                                    datasets: [{
+                                        data: [certifiedCount, verifiedCount, pendingCount, rejectedCount, expiredCount],
+                                        backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545', '#6c757d']
+                                    }]
+                                },
+                                options: { responsive: true, maintainAspectRatio: true }
+                            });
+                            
+                            const categoryCtx = document.getElementById('reportCategoryChart').getContext('2d');
+                            new Chart(categoryCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: Object.keys(categories),
+                                    datasets: [{
+                                        label: 'Number of Restaurants',
+                                        data: Object.values(categories),
+                                        backgroundColor: '#2e7d32'
+                                    }]
+                                },
+                                options: { responsive: true, maintainAspectRatio: true }
+                            });
+                        });
+                })
+                .catch(e => {
+                    hideLoading();
+                    showNotification('Error loading report: ' + e.message, 'danger');
+                });
+        }
+
+        function generateCertificateReportFixed() {
+        showLoading();
+        
+        Promise.all([
+            fetch('../api/admin_get_expiring_certificates.php').then(r => r.json()),
+            fetch('../api/admin_get_businesses.php').then(r => r.json())
+        ])
+        .then(([certData, businessData]) => {
+            hideLoading();
+            
+            const certificates = certData.data || [];
+            const stats = certData.stats || {};
+            const allBusinesses = businessData.data || [];
+            const noCertificateBusinesses = allBusinesses.filter(b => !b.cert_number).length;
+            
+            const expiredCerts = certificates.filter(c => c.expiry_status === 'expired').length;
+            const expiringCerts = certificates.filter(c => c.expiry_status === 'expiring_soon').length;
+            const validCerts = certificates.filter(c => c.expiry_status === 'valid').length;
+            const totalWithCert = certificates.length;
+            
+            // Tampilkan peringatan jika ada certificate yang file-nya hilang
+            const missingFileWarnings = certificates.filter(c => {
+                // Cek apakah ada indikasi file hilang (bisa ditambahkan logic sesuai kebutuhan)
+                return c.cert_file_missing === true;
+            });
+            
+            let warningHtml = '';
+            if (missingFileWarnings.length > 0) {
+                warningHtml = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Warning:</strong> ${missingFileWarnings.length} certificate(s) have missing files. 
+                        <button class="btn btn-sm btn-warning ms-2" onclick="location.reload()">Refresh</button>
+                    </div>
+                `;
+            }
+            
+            const html = `
+                ${warningHtml}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="mb-4"><i class="fas fa-certificate text-warning"></i> Certificate Report</h4>
+                        <hr>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="alert alert-success text-center">
+                            <h3 class="mb-0">${stats.valid || validCerts}</h3>
+                            <small>Valid Certificates</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="alert alert-warning text-center">
+                            <h3 class="mb-0">${stats.expiring_soon || expiringCerts}</h3>
+                            <small>Expiring Soon (≤30 days)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="alert alert-danger text-center">
+                            <h3 class="mb-0">${stats.expired || expiredCerts}</h3>
+                            <small>Expired Certificates</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="alert alert-secondary text-center">
+                            <h3 class="mb-0">${noCertificateBusinesses}</h3>
+                            <small>No Certificate</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <i class="fas fa-chart-pie"></i> Certificate Status
+                            </div>
+                            <div class="p-3">
+                                <canvas id="certStatusChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <i class="fas fa-clock"></i> Certificate Health
+                            </div>
+                            <div class="p-3">
+                                <div class="alert alert-success">
+                                    <strong>Certificate Health Score:</strong>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-success" style="width: ${totalWithCert > 0 ? ((validCerts/totalWithCert)*100).toFixed(1) : 0}%">
+                                            ${totalWithCert > 0 ? ((validCerts/totalWithCert)*100).toFixed(1) : 0}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-3"><i class="fas fa-info-circle"></i> Total certificates issued: ${totalWithCert}</p>
+                                <p><i class="fas fa-check-circle text-success"></i> Valid: ${validCerts}</p>
+                                <p><i class="fas fa-exclamation-triangle text-warning"></i> Expiring soon: ${expiringCerts}</p>
+                                <p><i class="fas fa-times-circle text-danger"></i> Expired: ${expiredCerts}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('analyticsContent').innerHTML = html;
+            
+            const certCtx = document.getElementById('certStatusChart').getContext('2d');
+            new Chart(certCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Valid', 'Expiring Soon', 'Expired', 'No Certificate'],
+                    datasets: [{
+                        data: [validCerts, expiringCerts, expiredCerts, noCertificateBusinesses],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+        })
+        .catch(e => {
+            hideLoading();
+            showNotification('Error loading certificate report: ' + e.message, 'danger');
+            document.getElementById('analyticsContent').innerHTML = '<div class="alert alert-danger">Unable to load certificate data. Please check API connection.</div>';
+        });
+    }
+
+        function generateCityReport() {
+            fetch('../api/admin_chart_data.php')
+                .then(r => r.json())
+                .then(data => {
+                    fetch('../api/admin_get_businesses.php')
+                        .then(r => r.json())
+                        .then(businessData => {
+                            hideLoading();
+                            
+                            const businesses = businessData.data || [];
+                            const cities = data.cities || [];
+                            const cityCounts = data.city_counts || [];
+                            const topCities = cities.slice(0, 10);
+                            const topCounts = cityCounts.slice(0, 10);
+                            const totalBusinesses = businesses.length;
+                            const topCity = topCities.length > 0 ? topCities[0] : 'N/A';
+                            const topCityCount = topCounts.length > 0 ? topCounts[0] : 0;
+                            
+                            const html = `
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="mb-4"><i class="fas fa-city text-info"></i> City Distribution Report</h4>
+                                        <hr>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <div class="alert alert-info text-center">
+                                            <h3 class="mb-0">${cities.length}</h3>
+                                            <small>Cities Covered</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="alert alert-success text-center">
+                                            <h3 class="mb-0">${topCityCount}</h3>
+                                            <small>Restaurants in ${topCity}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="alert alert-primary text-center">
+                                            <h3 class="mb-0">${totalBusinesses > 0 ? ((topCityCount/totalBusinesses)*100).toFixed(1) : 0}%</h3>
+                                            <small>Concentrated in Top City</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card-custom">
+                                            <div class="card-header-custom">
+                                                <i class="fas fa-chart-bar"></i> Top Cities
+                                            </div>
+                                            <div class="p-3">
+                                                <canvas id="cityBarChart" height="300"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card-custom">
+                                            <div class="card-header-custom">
+                                                <i class="fas fa-table"></i> Complete City List
+                                            </div>
+                                            <div class="p-3">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead class="table-info">
+                                                            <tr><th>Rank</th><th>City</th><th>Number of Restaurants</th><th>Percentage</th></tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            ${cities.map((city, idx) => `
+                                                                70
+                                                                    <td><strong>${idx + 1}</strong></td>
+                                                                    <td><i class="fas fa-map-marker-alt text-danger"></i> ${escapeHtml(city)}</td>
+                                                                    <td>${cityCounts[idx]}</td>
+                                                                    <td>${totalBusinesses > 0 ? ((cityCounts[idx]/totalBusinesses)*100).toFixed(1) : 0}%</td>
+                                                                70
+                                                            `).join('')}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            document.getElementById('analyticsContent').innerHTML = html;
+                            
+                            const barCtx = document.getElementById('cityBarChart').getContext('2d');
+                            new Chart(barCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: topCities,
+                                    datasets: [{
+                                        label: 'Number of Restaurants',
+                                        data: topCounts,
+                                        backgroundColor: '#17a2b8',
+                                        borderRadius: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: true,
+                                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                                }
+                            });
+                        });
+                })
+                .catch(e => {
+                    hideLoading();
+                    showNotification('Error loading city report: ' + e.message, 'danger');
+                });
+        }
+
+        function generateTrendReport() {
+            fetch('../api/admin_get_businesses.php')
+                .then(r => r.json())
+                .then(data => {
+                    hideLoading();
+                    
+                    const businesses = data.data || [];
+                    const monthlyData = {};
+                    const statusOverTime = {};
+                    
+                    businesses.forEach(b => {
+                        if (b.created_at) {
+                            const date = new Date(b.created_at);
+                            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                            monthlyData[monthYear] = (monthlyData[monthYear] || 0) + 1;
+                            
+                            if (!statusOverTime[monthYear]) statusOverTime[monthYear] = { certified: 0, verified: 0, pending: 0 };
+                            if (b.halal_status === 'certified') statusOverTime[monthYear].certified++;
+                            else if (b.halal_status === 'verified') statusOverTime[monthYear].verified++;
+                            else if (b.halal_status === 'pending') statusOverTime[monthYear].pending++;
+                        }
+                    });
+                    
+                    const sortedMonths = Object.keys(monthlyData).sort();
+                    const monthlyCounts = sortedMonths.map(m => monthlyData[m]);
+                    const totalAdded = businesses.length;
+                    const avgPerMonth = sortedMonths.length > 0 ? (totalAdded / sortedMonths.length).toFixed(1) : 0;
+                    
+                    const html = `
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="mb-4"><i class="fas fa-chart-line text-primary"></i> Trend Analysis Report</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="alert alert-primary text-center">
+                                    <h3 class="mb-0">${totalAdded}</h3>
+                                    <small>Total Restaurants Added</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="alert alert-success text-center">
+                                    <h3 class="mb-0">${avgPerMonth}</h3>
+                                    <small>Average per Month</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="alert alert-info text-center">
+                                    <h3 class="mb-0">${sortedMonths.length}</h3>
+                                    <small>Active Months</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card-custom">
+                                    <div class="card-header-custom">
+                                        <i class="fas fa-chart-line"></i> Restaurant Growth Over Time
+                                    </div>
+                                    <div class="p-3">
+                                        <canvas id="trendLineChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="card-custom">
+                                    <div class="card-header-custom">
+                                        <i class="fas fa-chart-bar"></i> Status Distribution Over Time
+                                    </div>
+                                    <div class="p-3">
+                                        <canvas id="trendBarChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card-custom">
+                                    <div class="card-header-custom">
+                                        <i class="fas fa-table"></i> Monthly Breakdown
+                                    </div>
+                                    <div class="p-3">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead class="table-primary">
+                                                    <tr><th>Month</th><th>New Restaurants</th><th>Certified</th><th>Verified</th><th>Pending</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${sortedMonths.map(month => {
+                                                        const status = statusOverTime[month] || { certified: 0, verified: 0, pending: 0 };
+                                                        return `
+                                                            <tr>
+                                                                <td><strong>${month}</strong></td>
+                                                                <td>${monthlyData[month]}</td>
+                                                                <td><span class="badge bg-success">${status.certified}</span></td>
+                                                                <td><span class="badge bg-info">${status.verified}</span></td>
+                                                                <td><span class="badge bg-warning">${status.pending}</span></td>
+                                                            </tr>
+                                                        `;
+                                                    }).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('analyticsContent').innerHTML = html;
+                    
+                    const lineCtx = document.getElementById('trendLineChart').getContext('2d');
+                    new Chart(lineCtx, {
+                        type: 'line',
+                        data: {
+                            labels: sortedMonths,
+                            datasets: [{
+                                label: 'New Restaurants',
+                                data: monthlyCounts,
+                                borderColor: '#2e7d32',
+                                backgroundColor: 'rgba(46,125,50,0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                    
+                    const barCtx = document.getElementById('trendBarChart').getContext('2d');
+                    new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: sortedMonths,
+                            datasets: [
+                                { label: 'Certified', data: sortedMonths.map(m => statusOverTime[m]?.certified || 0), backgroundColor: '#28a745' },
+                                { label: 'Verified', data: sortedMonths.map(m => statusOverTime[m]?.verified || 0), backgroundColor: '#17a2b8' },
+                                { label: 'Pending', data: sortedMonths.map(m => statusOverTime[m]?.pending || 0), backgroundColor: '#ffc107' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            scales: { y: { beginAtZero: true, stacked: true }, x: { stacked: true } }
+                        }
+                    });
+                })
+                .catch(e => {
+                    hideLoading();
+                    showNotification('Error loading trend report: ' + e.message, 'danger');
+                });
+        }
+
+        function exportReport(format) {
+            const content = document.getElementById('analyticsContent');
+            if (!content || content.innerHTML.includes('Select a report type above')) {
+                showNotification('Please generate a report first before exporting!', 'warning');
+                return;
+            }
+            
+            if (format === 'excel') {
+                window.open('../api/admin_export_report.php?format=excel', '_blank');
+                showNotification('Excel export started', 'info');
+            } else if (format === 'pdf') {
+                showNotification('PDF export will be available soon. For now, use Print (Ctrl+P) to save as PDF.', 'info');
+            }
+        }
+
+        function printReport() {
+            const content = document.getElementById('analyticsContent');
+            if (!content || content.innerHTML.includes('Select a report type above')) {
+                showNotification('Please generate a report first before printing!', 'warning');
+                return;
+            }
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Halal Food Japan - Analytics Report</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+                    <style>
+                        body { padding: 20px; font-family: 'Inter', Arial, sans-serif; }
+                        .text-success { color: #2e7d32 !important; }
+                        .table { width: 100%; border-collapse: collapse; }
+                        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        .table th { background-color: #2e7d32; color: white; }
+                        @media print { .btn, .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="text-center mb-4">
+                            <h2>Halal Food Japan</h2>
+                            <h4>Analytics Report</h4>
+                            <p>Generated on: ${new Date().toLocaleString()}</p>
+                            <hr>
+                        </div>
+                        ${content.innerHTML}
+                        <div class="text-center mt-5 text-muted">
+                            <p>© ${new Date().getFullYear()} Halal Food Japan - All Rights Reserved</p>
+                        </div>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopRealTimeUpdates();
+            } else {
+                startRealTimeUpdates();
+                refreshDashboardStats();
+            }
+        });
+
+        window.addEventListener('beforeunload', function() {
+            stopRealTimeUpdates();
+        });
+        
+        loadDashboard();
+    </script>
+</body>
+</html>

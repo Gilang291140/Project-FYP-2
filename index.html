@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Halal Food Japan - ハラールフードジャパン | Temukan Restoran Halal di Jepang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --japan-red: #bc002d;
+            --japan-red-light: #e8384c;
+            --japan-gold: #c9a03d;
+            --japan-dark: #1a1a2e;
+            --japan-gray: #4a4a4a;
+            --cherry-pink: #f8bbd0;
+            --cherry-light: #ffe4e9;
+            --sakura-pink: #ffb7c5;
+            --matsuri-purple: #9b59b6;
+            --matsuri-blue: #3498db;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Anime-style floating elements */
+        .anime-float {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 20px;
+            animation: floatAnime 8s ease-in-out infinite;
+        }
+        
+        @keyframes floatAnime {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-30px) rotate(10deg); opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .lang-btn.active {
+            background: var(--japan-red);
+            color: white;
+        }
+        
+        .bilingual-text {
+            transition: all 0.3s;
+        }
+        
+        .jp-only { display: none; }
+        .en-only { display: none; }
+        
+        body.lang-en .en-only { display: inline; }
+        body.lang-en .jp-only { display: none; }
+        body.lang-jp .jp-only { display: inline; }
+        body.lang-jp .en-only { display: none; }
+        
+        /* Japanese Pattern Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><path fill="%23bc002d" d="M50,5 L60,30 L85,30 L65,45 L75,70 L50,55 L25,70 L35,45 L15,30 L40,30 Z"/><circle cx="50" cy="50" r="3"/><path d="M20,80 Q30,70 40,80 Q50,90 60,80 Q70,70 80,80" stroke="%23bc002d" fill="none"/></svg>');
+            background-repeat: repeat;
+            background-size: 80px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Navbar Anime Style */
+        .navbar {
+            background: linear-gradient(135deg, var(--japan-dark) 0%, #2d2d44 100%);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .navbar.scrolled {
+            padding: 5px 0;
+            background: rgba(26,26,46,0.95);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .navbar-brand i {
+            margin-right: 8px;
+            color: var(--japan-red);
+            font-size: 1.8rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        /* Hero Section with Anime Background */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(188,0,45,0.92) 0%, rgba(232,56,76,0.88) 50%, rgba(255,95,82,0.85) 100%),
+                        url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600') center/cover fixed;
+            padding: 180px 0 120px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: "⛩️🏯🌸🍜🍣";
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 80px;
+            opacity: 0.15;
+            pointer-events: none;
+            animation: floatAnime 4s ease-in-out infinite;
+        }
+        
+        .hero-section::after {
+            content: "🎌🇯🇵";
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            font-size: 70px;
+            opacity: 0.15;
+            pointer-events: none;
+            animation: spin 20s linear infinite;
+        }
+        
+        .hero-section h1 {
+            font-size: 3.8rem;
+            font-weight: 900;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero-section .lead {
+            font-size: 1.3rem;
+            font-weight: 500;
+            animation: fadeInUp 1s ease;
+        }
+        
+        /* Anime Character */
+        .anime-character {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 999;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .character-bubble {
+            position: absolute;
+            bottom: 80px;
+            left: 80px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border-radius: 20px 20px 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .anime-character:hover .character-bubble {
+            opacity: 1;
+        }
+        
+        /* Search Box */
+        .search-box .input-group {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-radius: 60px;
+            overflow: hidden;
+            transition: all 0.3s;
+            animation: fadeInUp 1.2s ease;
+        }
+        
+        .search-box .input-group:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+        
+        .search-box input {
+            border: none;
+            padding: 18px 28px;
+            font-size: 1.1rem;
+        }
+        
+        .search-box button {
+            background: linear-gradient(135deg, var(--japan-gold), #ffd700);
+            border: none;
+            padding: 18px 40px;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .search-box button:hover {
+            background: linear-gradient(135deg, #ffd700, var(--japan-gold));
+            transform: scale(1.02);
+        }
+        
+        /* Stats Cards */
+        .stat-box {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .stat-box::before {
+            content: "✨";
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            font-size: 80px;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        
+        .stat-box:hover::before {
+            transform: rotate(20deg) scale(1.2);
+        }
+        
+        /* Filter Card */
+        .filter-card {
+            position: sticky;
+            top: 100px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .filter-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Business Cards - Anime Style */
+        .business-card {
+            border: none;
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.4s;
+            background: white;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            height: 100%;
+            cursor: pointer;
+            animation: fadeInUp 0.5s ease backwards;
+        }
+        
+        .business-card:nth-child(1) { animation-delay: 0.1s; }
+        .business-card:nth-child(2) { animation-delay: 0.2s; }
+        .business-card:nth-child(3) { animation-delay: 0.3s; }
+        
+        .business-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .card-img-wrapper {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--cherry-light), #fff0f0);
+        }
+        
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+        
+        .business-card:hover .card-img {
+            transform: scale(1.15);
+        }
+        
+        .halal-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--japan-red), var(--japan-red-light));
+            color: white;
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        /* Decorative Section */
+        .section-divider {
+            text-align: center;
+            margin: 50px 0;
+            position: relative;
+        }
+        
+        .section-divider span {
+            background: linear-gradient(135deg, var(--japan-red), var(--japan-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2rem;
+            font-weight: bold;
+            display: inline-block;
+            padding: 0 20px;
+        }
+        
+        .section-divider::before,
+        .section-divider::after {
+            content: "🌸";
+            font-size: 24px;
+            margin: 0 15px;
+            opacity: 0.7;
+            animation: spin 10s linear infinite;
+            display: inline-block;
+        }
+        
+        .section-divider::after {
+            content: "🍜";
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--japan-dark), #2d2d44);
+            position: relative;
+            margin-top: 60px;
+        }
+        
+        footer::before {
+            content: "🐉⛩️🌸🍣🍜🎌";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            opacity: 0.8;
+            animation: floatAnime 3s ease-in-out infinite;
+        }
+        
+        /* Scroll to Top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--japan-red), var(--japan-red-light));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        .scroll-top.show { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-5px) scale(1.1); }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2rem; }
+            .hero-section { padding: 120px 0 80px; }
+            .filter-card { position: relative; top: 0; margin-bottom: 20px; }
+            .anime-character { display: none; }
+            .language-switch { top: 70px; right: 10px; }
+            .stat-box { margin-bottom: 15px; }
+        }
+        
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(188,0,45,0.3);
+            border-radius: 50%;
+            border-top-color: var(--japan-red);
+            animation: spin 1s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <!-- Language Switcher -->
+    <div class="language-switch">
+        <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="setLanguage('jp')">日本語</button>
+    </div>
+
+    <!-- Anime Character Mascot -->
+    <div class="anime-character" onclick="characterSpeak()">
+        <div class="character-bubble" id="characterBubble">
+            <span class="en-only">Welcome to Japan! 🇯🇵</span>
+            <span class="jp-only">いらっしゃいませ！🇯🇵</span>
+        </div>
+        <i class="fas fa-otter fa-4x" style="color: var(--japan-red); filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));"></i>
+        <div style="font-size: 12px; text-align: center; font-weight: bold;">Halal-kun</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-utensils"></i> 
+                <span class="en-only">Halal Food Japan</span>
+                <span class="jp-only">ハラールフードジャパン</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">
+                            <i class="fas fa-home"></i> 
+                            <span class="en-only">Home</span><span class="jp-only">ホーム</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#businesses">
+                            <i class="fas fa-store"></i> 
+                            <span class="en-only">Shops</span><span class="jp-only">店舗</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle"></i> 
+                            <span class="en-only">About</span><span class="jp-only">概要</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-login.html">
+                            <i class="fas fa-user-shield"></i> 
+                            <span class="en-only">Admin</span><span class="jp-only">管理者</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-center" id="home" style="margin-top: 76px;">
+        <div class="container">
+            <h1>
+                <span class="en-only">Discover Halal Food in Japan</span>
+                <span class="jp-only">発見・日本のハラールフード</span>
+            </h1>
+            <p class="lead">
+                <span class="en-only">Find verified halal restaurants, cafes, and grocery stores across Japan</span>
+                <span class="jp-only">日本全国の認証済みハラールレストラン、カフェ、食品店を探す</span>
+            </p>
+            <div class="search-box mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" 
+                                   placeholder="🔍 Search by name, city, or category... / 店名、都市、カテゴリーで検索...">
+                            <button onclick="performSearch()">
+                                <i class="fas fa-search"></i> 
+                                <span class="en-only">Search</span><span class="jp-only">検索</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <div class="container mt-5">
+        <div class="row text-center g-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-box" onclick="showToast('Total Halal places in Japan!', 'info')">
+                    <i class="fas fa-store fa-3x" style="color: var(--japan-red);"></i>
+                    <h3 class="mt-3 mb-0" id="totalCount">-</h3>
+                    <p class="text-muted mt-2">
+                        <span class="en-only">Halal Places</span><span class="jp-only">ハラール店舗</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box" onclick="showToast('Certified halal restaurants', 'info')">
+                    <i class="fas fa-certificate fa-3x" style="color: var(--japan-gold);"></i>
+                    <h3 class="mt-3 mb-0" id="certifiedCount">-</h3>
+                    <p class="text-muted mt-2">
+                        <span class="en-only">Certified</span><span class="jp-only">認証済み</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box" onclick="showToast('Cities across Japan', 'info')">
+                    <i class="fas fa-city fa-3x" style="color: var(--matsuri-purple);"></i>
+                    <h3 class="mt-3 mb-0" id="cityCount">-</h3>
+                    <p class="text-muted mt-2">
+                        <span class="en-only">Cities</span><span class="jp-only">都市</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-box" onclick="showToast('Average customer rating', 'info')">
+                    <i class="fas fa-star fa-3x" style="color: #ffc107;"></i>
+                    <h3 class="mt-3 mb-0" id="ratingCount">-</h3>
+                    <p class="text-muted mt-2">
+                        <span class="en-only">Avg Rating</span><span class="jp-only">平均評価</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider">
+        <span>✨ おすすめ店舗 ✨</span>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="container mt-4" id="businesses">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card filter-card">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: var(--japan-red);">
+                            <i class="fas fa-sliders-h"></i> 
+                            <span class="en-only">Filters</span><span class="jp-only">フィルター</span>
+                        </h5>
+                        <hr>
+                        <label class="form-label fw-bold">
+                            <span class="en-only">Category</span><span class="jp-only">カテゴリー</span>
+                        </label>
+                        <select id="categoryFilter" class="form-select mb-3" onchange="applyFilters()">
+                            <option value=""><span class="en-only">All Categories</span><span class="jp-only">すべて</span></option>
+                            <option value="restaurant"><span class="en-only">Restaurant</span><span class="jp-only">レストラン</span></option>
+                            <option value="cafe"><span class="en-only">Cafe</span><span class="jp-only">カフェ</span></option>
+                            <option value="grocery"><span class="en-only">Grocery</span><span class="jp-only">食品店</span></option>
+                            <option value="food_truck"><span class="en-only">Food Truck</span><span class="jp-only">フードトラック</span></option>
+                            <option value="hotel"><span class="en-only">Hotel</span><span class="jp-only">ホテル</span></option>
+                        </select>
+                        
+                        <label class="form-label fw-bold">
+                            <span class="en-only">City</span><span class="jp-only">都市</span>
+                        </label>
+                        <select id="cityFilter" class="form-select mb-3" onchange="applyFilters()">
+                            <option value=""><span class="en-only">All Cities</span><span class="jp-only">すべて</span></option>
+                            <option value="Tokyo">東京</option>
+                            <option value="Osaka">大阪</option>
+                            <option value="Kyoto">京都</option>
+                            <option value="Nagoya">名古屋</option>
+                            <option value="Fukuoka">福岡</option>
+                            <option value="Sapporo">札幌</option>
+                        </select>
+                        
+                        <label class="form-label fw-bold">
+                            <span class="en-only">Price Range</span><span class="jp-only">価格帯</span>
+                        </label>
+                        <select id="priceFilter" class="form-select mb-3" onchange="applyFilters()">
+                            <option value=""><span class="en-only">All</span><span class="jp-only">すべて</span></option>
+                            <option value="$"><span class="en-only">$ (Budget)</span><span class="jp-only">¥ (お手頃)</span></option>
+                            <option value="$$"><span class="en-only">$$ (Moderate)</span><span class="jp-only">¥¥ (中級)</span></option>
+                            <option value="$$$"><span class="en-only">$$$ (Expensive)</span><span class="jp-only">¥¥¥ (高級)</span></option>
+                            <option value="$$$$"><span class="en-only">$$$$ (Luxury)</span><span class="jp-only">¥¥¥¥ (最高級)</span></option>
+                        </select>
+                        
+                        <hr>
+                        <button class="btn btn-outline-danger w-100" onclick="resetFilters()">
+                            <i class="fas fa-undo-alt"></i> 
+                            <span class="en-only">Reset Filters</span><span class="jp-only">リセット</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>
+                        <i class="fas fa-store text-danger"></i> 
+                        <span id="resultsCount">0</span> 
+                        <span class="en-only">Restaurants Found</span>
+                        <span class="jp-only">店舗が見つかりました</span>
+                    </h5>
+                </div>
+                
+                <div id="businessesContainer" class="row">
+                    <div class="col-12 text-center py-5">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-3"><span class="en-only">Loading...</span><span class="jp-only">読み込み中...</span></p>
+                    </div>
+                </div>
+                
+                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-white mt-5 py-5">
+        <div class="container text-center">
+            <i class="fas fa-heart text-danger mb-3 fs-2" style="animation: bounce 2s ease-in-out infinite; display: inline-block;"></i>
+            <p class="mb-2">
+                © 2026 Halal Food Japan - 
+                <span class="en-only">Japan Halal Association</span>
+                <span class="jp-only">日本ハラール協会</span>
+            </p>
+            <p class="small opacity-75">
+                <span class="en-only">Trusted Halal Certification Platform for Japan</span>
+                <span class="jp-only">日本の信頼できるハラール認証プラットフォーム</span>
+            </p>
+            <div class="mt-3">
+                <i class="fab fa-facebook me-3"></i>
+                <i class="fab fa-instagram me-3"></i>
+                <i class="fab fa-twitter me-3"></i>
+                <i class="fab fa-line"></i>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals (same as before but with bilingual text) -->
+    <div class="modal fade" id="aboutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle"></i> 
+                        <span class="en-only">About Halal Food Japan</span>
+                        <span class="jp-only">ハラールフードジャパンについて</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Halal Food Japan</strong> 
+                        <span class="en-only">is a comprehensive guide to halal-certified restaurants across Japan.</span>
+                        <span class="jp-only">は、日本国内のハラール認証レストランを紹介する総合ガイドです。</span>
+                    </p>
+                    <p>
+                        <span class="en-only">Our mission is to help Muslim travelers and residents easily find authentic halal food options.</span>
+                        <span class="jp-only">私たちの使命は、イスラム教徒の旅行者や在住者が簡単に本物のハラールフードを見つけられるように支援することです。</span>
+                    </p>
+                    <hr>
+                    <p class="mb-0">
+                        <i class="fas fa-check-circle text-success"></i> 
+                        <span class="en-only">Certified Halal Restaurants</span><span class="jp-only">認証済みハラール店舗</span><br>
+                        <i class="fas fa-check-circle text-success"></i> 
+                        <span class="en-only">Strict Inspection Standards</span><span class="jp-only">厳格な審査基準</span><br>
+                        <i class="fas fa-check-circle text-success"></i> 
+                        <span class="en-only">Regular Updates</span><span class="jp-only">定期的な更新情報</span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span class="en-only">Close</span><span class="jp-only">閉じる</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="businessDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-store"></i> 
+                        <span class="en-only">Business Details</span>
+                        <span class="jp-only">店舗詳細</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span class="en-only">Close</span><span class="jp-only">閉じる</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="certificateModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-certificate"></i> 
+                        <span class="en-only">Halal Certificate</span>
+                        <span class="jp-only">ハラール認証書</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="certificateModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span class="en-only">Close</span><span class="jp-only">閉じる</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="galleryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-image"></i> 
+                        <span class="en-only">Gallery</span>
+                        <span class="jp-only">ギャラリー</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="galleryFullImage" src="" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span class="en-only">Close</span><span class="jp-only">閉じる</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentPage = 1;
+        let currentLimit = 12;
+        let currentFilters = { search: '', category: '', city: '', price: '' };
+        let currentMap = null;
+        let currentLanguage = 'en';
+        
+        // Language switching
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.body.className = `lang-${lang}`;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase() === lang) btn.classList.add('active');
+            });
+            localStorage.setItem('preferred_language', lang);
+        }
+        
+        // Load saved language preference
+        const savedLang = localStorage.getItem('preferred_language');
+        if (savedLang) setLanguage(savedLang);
+        
+        // Anime character messages
+        const messages = {
+            en: ['Welcome to Japan! 🇯🇵', 'Looking for Halal food? 🍜', 'Try our recommendations! ✨', 'Arigato! 🙏', 'So delicious! 🍣'],
+            jp: ['いらっしゃいませ！🇯🇵', 'ハラールフードを探してる？🍜', 'おすすめを試してみて！✨', 'ありがとう！🙏', 'とても美味しい！🍣']
+        };
+        
+        let messageIndex = 0;
+        function characterSpeak() {
+            const bubble = document.getElementById('characterBubble');
+            const msgs = messages[currentLanguage === 'en' ? 'en' : 'jp'];
+            bubble.innerHTML = msgs[messageIndex % msgs.length];
+            messageIndex++;
+            bubble.style.opacity = '1';
+            setTimeout(() => {
+                bubble.style.opacity = '0';
+            }, 2000);
+        }
+        
+        // Auto character speak every 30 seconds
+        setInterval(() => {
+            characterSpeak();
+        }, 30000);
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+        
+        // Create floating anime elements
+        function createFloatingElements() {
+            const elements = ['🌸', '🍜', '🍣', '🎌', '⛩️', '🏯', '🐉', '🎋', '🍵', '🥟'];
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'anime-float';
+                element.innerHTML = elements[Math.floor(Math.random() * elements.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                element.style.animationDelay = Math.random() * 10 + 's';
+                element.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                document.body.appendChild(element);
+                
+                // Remove after animation
+                setTimeout(() => element.remove(), 8000);
+            }
+        }
+        
+        // Create floating elements periodically
+        setInterval(createFloatingElements, 10000);
+        createFloatingElements();
+        
+        function loadStats() {
+            fetch('/halal_food_japan/api/public_get_businesses.php?limit=1000')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        const businesses = data.data;
+                        document.getElementById('totalCount').textContent = businesses.length;
+                        const certified = businesses.filter(b => b.halal_status === 'certified').length;
+                        document.getElementById('certifiedCount').textContent = certified;
+                        const cities = [...new Set(businesses.map(b => b.city).filter(c => c))];
+                        document.getElementById('cityCount').textContent = cities.length;
+                        const avgRating = businesses.reduce((sum, b) => sum + (parseFloat(b.rating) || 0), 0) / businesses.length || 0;
+                        document.getElementById('ratingCount').textContent = avgRating.toFixed(1);
+                    }
+                })
+                .catch(e => console.error('Stats error:', e));
+        }
+        
+        function loadBusinesses() {
+            showSkeletonLoader();
+            let url = `/halal_food_japan/api/public_get_businesses.php?page=${currentPage}&limit=${currentLimit}`;
+            if (currentFilters.search) url += `&search=${encodeURIComponent(currentFilters.search)}`;
+            if (currentFilters.category) url += `&category=${currentFilters.category}`;
+            if (currentFilters.city) url += `&city=${currentFilters.city}`;
+            if (currentFilters.price) url += `&price_range=${currentFilters.price}`;
+            
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.length > 0) {
+                        displayBusinesses(data.data);
+                        displayPagination(data.pagination);
+                        document.getElementById('resultsCount').textContent = data.pagination.total_records;
+                    } else {
+                        showEmptyState();
+                        document.getElementById('resultsCount').textContent = '0';
+                    }
+                })
+                .catch(error => { 
+                    console.error('Fetch error:', error); 
+                    showError('Failed to load restaurants. Please check your connection.');
+                });
+        }
+        
+        function displayBusinesses(businesses) {
+            const container = document.getElementById('businessesContainer');
+            container.innerHTML = businesses.map((business, idx) => `
+                <div class="col-md-6 col-lg-4" style="animation-delay: ${idx * 0.1}s">
+                    <div class="business-card" onclick="viewBusinessDetail(${business.id})">
+                        <div class="card-img-wrapper">
+                            <img src="${business.image_url || 'https://placehold.co/600x400/f8bbd0/bc002d?text=' + encodeURIComponent(business.business_name)}" 
+                                 alt="${business.business_name}" class="card-img"
+                                 onerror="this.src='https://placehold.co/600x400/f8bbd0/bc002d?text=🍜'">
+                            <div class="halal-badge">
+                                <i class="fas ${business.halal_status === 'certified' ? 'fa-certificate' : 'fa-check-circle'}"></i> 
+                                ${business.halal_status === 'certified' ? (currentLanguage === 'en' ? 'Certified' : '認証済み') : (currentLanguage === 'en' ? 'Verified' : '確認済み')}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <span class="category-badge">
+                                <i class="fas ${getCategoryIcon(business.category)}"></i> 
+                                ${getCategoryName(business.category, currentLanguage)}
+                            </span>
+                            <h5 class="card-title">${escapeHtml(business.business_name)}</h5>
+                            <p class="card-text"><i class="fas fa-map-marker-alt text-danger"></i> ${escapeHtml(business.address)}, ${escapeHtml(business.city)}</p>
+                            <p class="card-text"><i class="fas fa-tag"></i> <span class="price-range">${business.price_range || '¥¥'}</span></p>
+                            <button class="btn-view" onclick="event.stopPropagation();viewBusinessDetail(${business.id})">
+                                <i class="fas fa-info-circle"></i> 
+                                ${currentLanguage === 'en' ? 'View Details' : '詳細を見る'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getCategoryName(category, lang) {
+            const names = {
+                restaurant: { en: 'Restaurant', jp: 'レストラン' },
+                cafe: { en: 'Cafe', jp: 'カフェ' },
+                grocery: { en: 'Grocery', jp: '食品店' },
+                food_truck: { en: 'Food Truck', jp: 'フードトラック' },
+                hotel: { en: 'Hotel', jp: 'ホテル' }
+            };
+            return names[category]?.[lang] || category;
+        }
+        
+        function getCategoryIcon(category) {
+            const icons = { 'restaurant': 'fa-utensils', 'cafe': 'fa-coffee', 'grocery': 'fa-shopping-basket', 'food_truck': 'fa-truck', 'hotel': 'fa-hotel' };
+            return icons[category] || 'fa-store';
+        }
+        
+        function displayPagination(pagination) {
+            if (!pagination || pagination.total_pages <= 1) { 
+                document.getElementById('pagination').innerHTML = ''; 
+                return; 
+            }
+            let html = '<ul class="pagination">';
+            if (currentPage > 1) html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPage - 1})">«</a></li>`;
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (i === 1 || i === pagination.total_pages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<li class="page-item ${currentPage === i ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+            if (currentPage < pagination.total_pages) html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPage + 1})">»</a></li>`;
+            html += '</ul>';
+            document.getElementById('pagination').innerHTML = html;
+        }
+        
+        function changePage(page) { currentPage = page; loadBusinesses(); window.scrollTo({ top: 400, behavior: 'smooth' }); }
+        function performSearch() { currentFilters.search = document.getElementById('searchInput').value; currentPage = 1; loadBusinesses(); }
+        function applyFilters() {
+            currentFilters.category = document.getElementById('categoryFilter').value;
+            currentFilters.city = document.getElementById('cityFilter').value;
+            currentFilters.price = document.getElementById('priceFilter').value;
+            currentPage = 1; loadBusinesses();
+        }
+        function resetFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('cityFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.getElementById('searchInput').value = '';
+            currentFilters = { search: '', category: '', city: '', price: '' };
+            currentPage = 1; loadBusinesses();
+            showToast(currentLanguage === 'en' ? 'Filters reset!' : 'フィルターをリセットしました', 'success');
+        }
+        
+        function viewBusinessDetail(id) {
+            fetch(`/halal_food_japan/api/admin_get_business.php?id=${id}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const b = data.data;
+                        const images = Array.isArray(b.images) ? b.images : [];
+                        
+                        let galleryHtml = '';
+                        if (images.length > 0) {
+                            galleryHtml = `
+                                <div class="mt-3">
+                                    <label class="fw-bold"><i class="fas fa-image text-danger"></i> Gallery</label>
+                                    <div class="row g-2 mt-1">
+                                        ${images.map(img => `
+                                            <div class="col-4">
+                                                <img src="/halal_food_japan/backend/${img.image_url}" class="gallery-img" onclick="openGallery('${img.image_url}')" style="cursor:pointer; width:100%; height:100px; object-fit:cover; border-radius:8px;">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        let certificateHtml = '';
+                        if (b.cert_number && b.halal_status === 'certified') {
+                            let expiryStatus = '', expiryClass = '', daysLeft = '';
+                            if (b.cert_expiry_date) {
+                                const expiryDate = new Date(b.cert_expiry_date);
+                                const today = new Date();
+                                daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                                if (daysLeft <= 0) { expiryStatus = currentLanguage === 'en' ? 'Expired' : '期限切れ'; expiryClass = 'certificate-expired'; }
+                                else if (daysLeft <= 30) { expiryStatus = currentLanguage === 'en' ? `Expires in ${daysLeft} days` : `${daysLeft}日で期限切れ`; expiryClass = 'certificate-expiring'; }
+                                else { expiryStatus = currentLanguage === 'en' ? 'Valid' : '有効'; expiryClass = 'certificate-valid'; }
+                            }
+                            certificateHtml = `
+                                <div class="certificate-preview">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><strong><i class="fas fa-certificate"></i> Halal Certificate</strong>
+                                        <div class="mt-2"><span class="certificate-badge ${expiryClass}">${expiryStatus}</span></div></div>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="viewCertificate(${b.id})"><i class="fas fa-eye"></i> View</button>
+                                    </div>
+                                    <hr class="my-2">
+                                    <small><strong>Certificate #:</strong> ${escapeHtml(b.cert_number)}<br>
+                                    <strong>Issued By:</strong> ${escapeHtml(b.cert_issued_by || 'JHA')}<br>
+                                    <strong>Issue Date:</strong> ${escapeHtml(b.cert_issue_date || 'N/A')}<br>
+                                    <strong>Expiry Date:</strong> ${escapeHtml(b.cert_expiry_date || 'N/A')}</small>
+                                </div>
+                            `;
+                        }
+                        
+                        let mapHtml = '';
+                        if (b.latitude && b.longitude) {
+                            mapHtml = `
+                                <div class="mt-3">
+                                    <label class="fw-bold"><i class="fas fa-map-marker-alt text-danger"></i> Map</label>
+                                    <div id="detailMap" class="map-container"></div>
+                                    <div class="mt-2"><a href="https://www.google.com/maps?q=${b.latitude},${b.longitude}" target="_blank" class="btn btn-sm btn-outline-danger w-100"><i class="fas fa-external-link-alt"></i> Open in Google Maps</a></div>
+                                </div>
+                            `;
+                        }
+                        
+                        document.getElementById('detailModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>${escapeHtml(b.business_name)} <i class="fas fa-store text-danger"></i></h4>
+                                    <p class="text-muted"><i class="fas fa-map-marker-alt text-danger"></i> ${escapeHtml(b.address)}, ${escapeHtml(b.city)}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-phone"></i> Phone:</strong> ${escapeHtml(b.phone) || 'N/A'}</p>
+                                    <p><strong><i class="fas fa-envelope"></i> Email:</strong> ${escapeHtml(b.email) || 'N/A'}</p>
+                                    <p><strong><i class="fas fa-globe"></i> Website:</strong> ${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank">Visit website</a>` : 'N/A'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-tag"></i> Price Range:</strong> ${escapeHtml(b.price_range) || '¥¥'}</p>
+                                    <p><strong><i class="fas fa-clock"></i> Opening Hours:</strong> ${escapeHtml(b.opening_hours) || 'Contact for hours'}</p>
+                                    <p><strong><i class="fas fa-certificate"></i> Halal Status:</strong> <span class="badge bg-danger">${b.halal_status === 'certified' ? 'Certified' : 'Verified'}</span></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6>Description</h6>
+                            <p>${escapeHtml(b.description) || 'No description available.'}</p>
+                            ${b.no_pork ? '<p><i class="fas fa-check-circle text-success"></i> ✓ No pork products</p>' : ''}
+                            ${b.no_alcohol ? '<p><i class="fas fa-check-circle text-success"></i> ✓ No alcohol served</p>' : ''}
+                            ${b.muslim_owner ? '<p><i class="fas fa-check-circle text-success"></i> ✓ Muslim owned</p>' : ''}
+                            ${galleryHtml}
+                            ${certificateHtml}
+                            ${mapHtml}
+                        `;
+                        
+                        new bootstrap.Modal(document.getElementById('businessDetailModal')).show();
+                        
+                        if (b.latitude && b.longitude) {
+                            setTimeout(() => {
+                                const mapContainer = document.getElementById('detailMap');
+                                if (mapContainer) {
+                                    if (currentMap) currentMap.remove();
+                                    currentMap = L.map('detailMap').setView([b.latitude, b.longitude], 15);
+                                    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM' }).addTo(currentMap);
+                                    L.marker([b.latitude, b.longitude]).addTo(currentMap).bindPopup(`<strong>${escapeHtml(b.business_name)}</strong><br>${escapeHtml(b.address)}`).openPopup();
+                                }
+                            }, 500);
+                        }
+                    }
+                })
+                .catch(e => console.error(e));
+        }
+        
+        function viewCertificate(businessId) {
+            fetch(`/halal_food_japan/api/admin_get_business.php?id=${businessId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data.cert_number) {
+                        const cert = data.data;
+                        let expiryStatus = '';
+                        if (cert.cert_expiry_date) {
+                            const expiryDate = new Date(cert.cert_expiry_date);
+                            const today = new Date();
+                            const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                            if (daysLeft <= 0) expiryStatus = '<span class="badge bg-danger">Expired / 期限切れ</span>';
+                            else if (daysLeft <= 30) expiryStatus = `<span class="badge bg-warning text-dark">Expires in ${daysLeft} days / ${daysLeft}日で期限切れ</span>`;
+                            else expiryStatus = '<span class="badge bg-success">Valid / 有効</span>';
+                        }
+                        
+                        const certificateFileUrl = `/halal_food_japan/api/get_certificate_file.php?id=${cert.id}`;
+                        
+                        document.getElementById('certificateModalBody').innerHTML = `
+                            <div class="text-center mb-3"><i class="fas fa-certificate fa-4x text-danger"></i></div>
+                            <h5 class="text-center">${escapeHtml(cert.business_name)}</h5>
+                            <p class="text-center text-muted">Halal Certificate / ハラール認証書</p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Certificate # / 認証番号:</strong><br> ${escapeHtml(cert.cert_number)}</p>
+                                    <p><strong>Issued By / 発行機関:</strong><br> ${escapeHtml(cert.cert_issued_by || 'JHA')}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Issue Date / 発行日:</strong><br> ${escapeHtml(cert.cert_issue_date || 'N/A')}</p>
+                                    <p><strong>Expiry Date / 有効期限:</strong><br> ${escapeHtml(cert.cert_expiry_date || 'N/A')}</p>
+                                    <p><strong>Status / ステータス:</strong><br> ${expiryStatus}</p>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="${certificateFileUrl}" target="_blank" class="btn btn-danger"><i class="fas fa-download"></i> View Certificate / 認証書を見る</a>
+                            </div>
+                            <hr>
+                            <div class="alert alert-success"><i class="fas fa-check-circle"></i> This restaurant is officially halal certified. / この店舗は公式にハラール認証を受けています。</div>
+                        `;
+                        new bootstrap.Modal(document.getElementById('certificateModal')).show();
+                    }
+                });
+        }
+        
+        function openGallery(imageUrl) {
+            document.getElementById('galleryFullImage').src = '/halal_food_japan/backend/' + imageUrl;
+            new bootstrap.Modal(document.getElementById('galleryModal')).show();
+        }
+        
+        function escapeHtml(text) { if (!text) return ''; return String(text).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+        
+        function showSkeletonLoader() {
+            document.getElementById('businessesContainer').innerHTML = Array(6).fill(`
+                <div class="col-md-6 col-lg-4">
+                    <div class="skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton-title"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showEmptyState() {
+            document.getElementById('businessesContainer').innerHTML = `
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h4>${currentLanguage === 'en' ? 'No restaurants found' : '店舗が見つかりません'}</h4>
+                        <p>${currentLanguage === 'en' ? 'Try adjusting your filters' : 'フィルターを変更してお試しください'}</p>
+                        <button class="btn btn-danger" onclick="resetFilters()">${currentLanguage === 'en' ? 'Reset Filters' : 'フィルターをリセット'}</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            document.getElementById('businessesContainer').innerHTML = `<div class="col-12"><div class="alert alert-danger text-center">${escapeHtml(message)}</div></div>`;
+        }
+        
+        function showToast(message, type) {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                const container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999';
+                document.body.appendChild(container);
+                toastContainer = container;
+            }
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'alert-success' : 'alert-info';
+            toast.className = `alert ${bgClass} shadow`;
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '10px';
+            toast.style.marginTop = '10px';
+            toast.style.animation = 'slideIn 0.3s ease';
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${escapeHtml(message)}`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBusinesses();
+            loadStats();
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+            window.addEventListener('scroll', () => {
+                const scrollTop = document.querySelector('.scroll-top');
+                if (window.scrollY > 300) scrollTop.classList.add('show');
+                else scrollTop.classList.remove('show');
+            });
+        });
+        
+        // CSS for skeleton
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            .skeleton-card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+            .skeleton-img { height: 240px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+            .skeleton-content { padding: 20px; }
+            .skeleton-title { height: 24px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; margin-bottom: 15px; width: 80%; }
+            .skeleton-text { height: 14px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; margin-bottom: 10px; }
+            .category-badge { display: inline-block; padding: 5px 14px; background: linear-gradient(135deg, #f8bbd0, #ffebf0); color: #bc002d; border-radius: 25px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+            .price-range { color: #c9a03d; font-weight: 600; }
+            .btn-view { background: linear-gradient(135deg, #bc002d, #e8384c); border: none; color: white; padding: 10px 20px; border-radius: 30px; font-weight: 600; width: 100%; transition: all 0.3s; }
+            .btn-view:hover { transform: scale(1.02); background: linear-gradient(135deg, #8e0000, #bc002d); }
+            .certificate-preview { background: #f8f9fa; padding: 15px; border-radius: 15px; margin: 15px 0; border-left: 4px solid #bc002d; }
+            .certificate-badge { display: inline-block; padding: 3px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+            .certificate-valid { background: #28a745; color: white; }
+            .certificate-expiring { background: #ffc107; color: #333; }
+            .certificate-expired { background: #dc3545; color: white; }
+            .map-container { height: 250px; border-radius: 15px; overflow: hidden; margin: 15px 0; }
+            .empty-state { text-align: center; padding: 60px 20px; }
+            .empty-state i { font-size: 80px; color: #6c757d; margin-bottom: 20px; }
+            @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        `;
+        document.head.appendChild(styleSheet);
+        
+        // Add gallery image style
+        const galleryStyle = document.createElement('style');
+        galleryStyle.textContent = `
+            .gallery-img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform 0.3s; }
+            .gallery-img:hover { transform: scale(1.05); }
+        `;
+        document.head.appendChild(galleryStyle);
+    </script>
+</body>
+</html>
